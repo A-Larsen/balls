@@ -82,27 +82,24 @@ drawCircle(SDL_Renderer *renderer,
     }
 }
 
-void
-checkCircleCollision(int radius,
-                     SDL_Point center)
+float clamp(float v, float min, float max) {
+    if (v < min) return min;
+    if (v > max) return max;
+    return v;
+}
+
+bool circleRectCollide(SDL_Point circle, float r,
+                       SDL_Rect rect)
 {
-    float x = 0;
-    float y = 0;
+    // does this assume that circle x and circle y are the center of the circle?
+    float closestX = clamp(circle.x, rect.x, rect.x + rect.w);
+    float closestY = clamp(circle.y, rect.y, rect.y + rect.h);
 
-    for(float i = 0; i < 2 * M_PI; i += 0.001f)
-    {
-        x = cosf(i);
-        y = sinf(i);
-        SDL_Rect point = {
-            .x = (x * radius) + center.x, 
-            .y = (y * radius) + center.y,
-            .w = 1, 
-            .h = 1
-        };
-    // SDL_HasRectIntersection(&screen_rect);
-    }
+    float dx = circle.x - closestX;
+    float dy = circle.y - closestY;
 
-
+    // use the dot product to determine collision
+    return (dx*dx + dy*dy) <= (r*r);
 }
 
 static uint8_t
@@ -116,6 +113,7 @@ updateMain(Game *game,
     static int initial_height = 400;
     float velocity = GRAVITY * seconds;
     float e = 0.9;
+    const float circle_radius = 15;
     // float restitution  = e * velocity;
     // trying to find height this way
     //
@@ -135,11 +133,14 @@ updateMain(Game *game,
 
     // TODO
     // this should be used be added everytime the ball hits the ground
+    bool out_of_bounds =
+        !circleRectCollide(center, circle_radius, screen_rect);
 
     // SDL_HasRectIntersection(&screen_rect);
     printf("velocity: %f\n", velocity);
+    printf("out of bounds: %d\n", out_of_bounds);
     // printf("restitution: %f\n", restitution);
-    drawCircle(game->renderer, 15, center, COLOR_RED);
+    drawCircle(game->renderer, circle_radius, center, COLOR_RED);
     return UPDATE_MAIN;
 }
 
