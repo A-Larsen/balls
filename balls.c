@@ -31,8 +31,11 @@ typedef struct _Game {
     SDL_Window *window;
 } Game;
 
-typedef uint8_t (*Update_callback)(Game *game, float seconds, uint64_t frame, SDL_KeyCode key,
-                                   bool keydown);
+typedef uint8_t (*Update_callback) (Game *game, 
+                                    float seconds, 
+                                    uint64_t frame,
+                                    SDL_KeyCode key,
+                                    bool keydown);
 
 enum {UPDATE_MAIN};
 
@@ -40,7 +43,8 @@ enum {COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_ORANGE, COLOR_GREY,
       COLOR_BLACK, COLOR_SIZE};
 
 void
-setColor(SDL_Renderer *renderer, uint8_t color)
+setColor(SDL_Renderer *renderer,
+         uint8_t color)
 {
     const SDL_Color colors[] = {
         [COLOR_RED] = {.r = 217, .g = 100, .b = 89, .a = 255},
@@ -56,11 +60,16 @@ setColor(SDL_Renderer *renderer, uint8_t color)
 }
 
 void
-drawCircle(SDL_Renderer *renderer, int radius, SDL_Point center, uint8_t color)
+drawCircle(SDL_Renderer *renderer,
+           int radius,
+           SDL_Point center,
+           uint8_t color)
+// (x - h)^2 + (y - k)^2 = r^2
+// Drawing a circle with the standard circle formula.
+// There may be a more performant way to do this...
 {
-    // (x - h)^2 + (y - k)^2 = r^2
-    setColor(renderer, color);
     int size = radius;
+    setColor(renderer, color);
 
     // diameter is radius * 2
     for (int x = 0; x < radius * 2; x++) {
@@ -73,17 +82,23 @@ drawCircle(SDL_Renderer *renderer, int radius, SDL_Point center, uint8_t color)
 }
 
 static uint8_t
-updateMain(Game *game, float seconds, uint64_t frame, SDL_KeyCode key, bool keydown)
+updateMain(Game *game,
+           float seconds,
+           uint64_t frame,
+           SDL_KeyCode key,
+           bool keydown)
 {
     static SDL_Point center = {.x = 400, .y = 400};
     static int initial_height = 400;
+    float velocity = GRAVITY * seconds;
+    float e = 0.9;
+    float restitution  = e * velocity;
     // trying to find height this way
     //
     //     t = sqrt(2h/g)
     //
     // might not be useful because the height is inverted.
     
-    float velocity = GRAVITY * seconds;
     center.y = velocity + initial_height;
     // this is the fromula for height but it is not usefull in this situation
     // because we could just check it by looking at center.y
@@ -92,11 +107,9 @@ updateMain(Game *game, float seconds, uint64_t frame, SDL_KeyCode key, bool keyd
     // * Rubber ball: (e \approx 0.8 - 0.9)
     // * Basketball: (e \approx 0.75)
     // * Tennis ball: (e \approx 0.6)
-    float e = 0.9;
 
     // TODO
     // this should be used be added everytime the ball hits the ground
-    float restitution  = e * velocity;
 
     printf("velocity: %f\n", velocity);
     printf("restitution: %f\n", restitution);
@@ -105,7 +118,11 @@ updateMain(Game *game, float seconds, uint64_t frame, SDL_KeyCode key, bool keyd
 }
 
 void
-Game_Update(Game *game, const uint8_t fps)
+Game_Update(Game *game,
+            const uint8_t fps)
+// The main game loop. Sets up which callback will be used in the function loop.
+// Each update callback determined what update callback will be called next by
+// returning the appropriate enum value
 {
     uint64_t frame = 0;
     bool quit = false;
@@ -114,6 +131,10 @@ Game_Update(Game *game, const uint8_t fps)
     Update_callback update;
     float mspd = (1.0f / (float)fps) * 1000.0f;
     float seconds = 0;
+    SDL_Event event;
+    SDL_KeyCode key = 0;
+    uint32_t end = 0;
+    uint32_t elapsed_time = 0;
 
 
     while (!quit) {
@@ -135,8 +156,6 @@ Game_Update(Game *game, const uint8_t fps)
         }
 
 
-        SDL_Event event;
-        SDL_KeyCode key = 0;
 
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
@@ -156,8 +175,8 @@ Game_Update(Game *game, const uint8_t fps)
 
         update_id = update(game, seconds, frame, key, keydown);
 
-        uint32_t end = SDL_GetTicks();
-        uint32_t elapsed_time = end - start;
+        end = SDL_GetTicks();
+        elapsed_time = end - start;
 
         if (elapsed_time < mspd) {
             elapsed_time = mspd - elapsed_time;
@@ -171,6 +190,8 @@ Game_Update(Game *game, const uint8_t fps)
 
 void
 Game_Init(Game *game)
+// All the variable and data initialization needed for SDL and perhaps game
+// variables
 {
     memset(game, 0, sizeof(Game));
 
