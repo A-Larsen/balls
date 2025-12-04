@@ -7,15 +7,15 @@
 #include <math.h>
 
 // NOTE:
-// This is a less accurate depiction of gravity. I am using 10 as the
-// mesurement in meters per second because you cannot have fractions of a pixel.
-// In order to depict this more accurately I would need an approximate size of a
-// pixel, and not every pixel is the same size. I have decided not to be THAT
-// accurate.
+// This is a less accurate depiction of gravity. I am using a different number
+// as the mesurement in meters per second because you cannot have fractions of a
+// pixel. In order to depict this more accurately I would need an approximate
+// size of a pixel, and not every pixel is the same size. I have decided not to
+// be THAT accurate.
 #define SCREEN_WIDTH_PX 800U
 #define SCREEN_HEIGHT_PX 800U
 #define METER_AS_PIXELS 3779U
-#define GRAVITY 10U
+#define GRAVITY 90U
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -83,12 +83,12 @@ updateMain(Game *game, float seconds, uint64_t frame, SDL_KeyCode key, bool keyd
     //
     // might not be useful because the height is inverted.
     
-    center.y += GRAVITY;
+    float velocity = GRAVITY * seconds;
+    center.y = velocity + initial_height;
     // this is the fromula for height but it is not usefull in this situation
     // because we could just check it by looking at center.y
     // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds * seconds);
 
-    float velocity = GRAVITY * seconds;
     // * Rubber ball: (e \approx 0.8 - 0.9)
     // * Basketball: (e \approx 0.75)
     // * Tennis ball: (e \approx 0.6)
