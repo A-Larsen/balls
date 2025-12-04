@@ -37,6 +37,8 @@ typedef struct _Circle {
    SDL_Point center; 
    SDL_Point velocities;
    uint16_t radius;
+   bool vertical;
+   bool horizontal;
 } Circle;
 
 typedef uint8_t (*Update_callback) (Game *game, 
@@ -84,7 +86,7 @@ drawCircle(SDL_Renderer *renderer,
         for (int y = 0; y < radius * 2; y++) {
             if (((x - size)*(x - size)) + ((y - size)*(y - size)) <= radius
                  * radius)
-                SDL_RenderDrawPoint(renderer, center.x + x, center.y + y);
+                SDL_RenderDrawPoint(renderer, center.x - radius + x, center.y - radius + y);
         }
     }
 }
@@ -99,14 +101,14 @@ bool circleRectCollide(SDL_Point circle,
                        float r,
                        SDL_Rect rect)
 {
-    float closestX = clamp(circle.x + r, rect.x, rect.x + rect.w);
-    float closestY = clamp(circle.y + r, rect.y, rect.y + rect.h);
+    float closestX = clamp(circle.x, rect.x, rect.x + rect.w);
+    float closestY = clamp(circle.y, rect.y, rect.y + rect.h);
 
     // this gets the distance form the center of the circle to a side of a
     // rectangle. It could be negative or positive. Because we are squaring them
     // it doesn't matter.
-    float dx = circle.x + r - closestX;
-    float dy = circle.y + r - closestY;
+    float dx = circle.x - closestX;
+    float dy = circle.y - closestY;
 
     // use the dot product to determine collision
     return (dx*dx + dy*dy) <= (r*r);
@@ -122,19 +124,24 @@ updateMain(Game *game,
     // * Rubber ball: (e \approx 0.8 - 0.9)
     // * Basketball: (e \approx 0.75)
     // * Tennis ball: (e \approx 0.6)
+    static Circle circle = {
+        .center = {.x = 400, .y = 400},
+        .radius = 30,
+        .vertical = true,
+        .horizontal = true,
+    };
     static int initial_y = 400;
     static int initial_x = 400;
-    float e = 0.9;
+    static int max_height = 400;
+    static float e = 0.9;
     // this is the fromula for height but it is not usefull in this situation
     // because we could just check it by looking at center.y
     // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds *
     // seconds);
 
-    Circle circle = {
-        .center = {.x = 400, .y = 400},
-        .velocities = {.y = GRAVITY * seconds, .x = 0 * seconds},
-        .radius = 30
-    };
+    circle.velocities.y = GRAVITY * seconds;
+    circle.velocities.x = 0 * seconds;
+
     // float restitution  = e * velocity;
     // trying to find height this way
     //
@@ -142,8 +149,8 @@ updateMain(Game *game,
     //
     // might not be useful because the height is inverted.
     
-    circle.center.y = circle.velocities.y + initial_y;
-    circle.center.x = circle.velocities.x + initial_x;
+    circle.center.y = circle.velocities.y * (circle.vertical ? 1 : -1) + initial_y;
+    circle.center.x = circle.velocities.x * (circle.horizontal ? 1 : -1) + initial_x;
 
 
 
@@ -154,9 +161,15 @@ updateMain(Game *game,
 
     // SDL_HasRectIntersection(&screen_rect);
     // printf("velocity: %f\n", velocity);
-    printf("out of bounds: %d\n", game->out_of_bounds);
+    // printf("out of bounds: %d\n", game->out_of_bounds);
     // printf("restitution: %f\n", restitution);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
+
+    if (circle.center.y + circle.radius  > 800) {
+        initial_y = circle.center.y;
+        // restitution -= e;
+        circle.vertical = false;
+    }
     return UPDATE_MAIN;
 }
 

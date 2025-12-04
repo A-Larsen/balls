@@ -1,3 +1,5 @@
+== GDB
+remember that conditional break points exist
 == Links
 * https://www.youtube.com/watch?v=nXrEX6j-Mws&list=PLkhTWnF-dZA7fqD7CF8koSTsRbmfBfr2_
 * https://www.unitconverters.net/typography/pixel-x-to-meter.htm[pixels to meters]
