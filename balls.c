@@ -45,29 +45,28 @@ setColor(SDL_Renderer *renderer, uint8_t color)
                            colors[color].b, colors[color].a);
 }
 
-void drawCircle(SDL_Renderer *ren, float radius, SDL_Point center, uint8_t color)
+void
+drawCircle(SDL_Renderer *renderer, int radius, SDL_Point center, uint8_t color)
 {
-    float x = 0;
-    float y = 0;
-    for(float i = 0; i < 2 * M_PI; i += 0.001f)
-    {
-        x = cosf(i);
-        y = sinf(i);
-        SDL_Rect point = {
-            (x * radius) + center.x, 
-            (y * radius) + center.y,
-            1, 
-            1
-        };
-        setColor(ren, color);
-        SDL_RenderFillRect(ren, &point);
+    // (x - h)^2 + (y - k)^2 = r^2
+    setColor(renderer, color);
+    int size = radius;
+
+    // diameter is radius * 2
+    for (int x = 0; x < radius * 2; x++) {
+        for (int y = 0; y < radius * 2; y++) {
+            if (((x - size)*(x - size)) + ((y - size)*(y - size)) <= radius
+                 * radius)
+                SDL_RenderDrawPoint(renderer, center.x + x, center.y + y);
+        }
     }
 }
 
 static uint8_t
-updateMain(Game *game, uint64_t frame, SDL_KeyCode key, bool keydown) {
+updateMain(Game *game, uint64_t frame, SDL_KeyCode key, bool keydown)
+{
     SDL_Point center = {.x = 400, .y = 400};
-    drawCircle(game->renderer, 100, center, COLOR_RED);
+    drawCircle(game->renderer, 15, center, COLOR_RED);
     return UPDATE_MAIN;
 }
 
@@ -158,7 +157,8 @@ Game_Quit(Game *game)
     SDL_Quit();
 }
 
-int main(void)
+int
+main(void)
 {
     Game game;
     Game_Init(&game);
