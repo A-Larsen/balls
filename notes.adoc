@@ -3,3 +3,4 @@
 * https://www.unitconverters.net/typography/pixel-x-to-meter.htm[pixels to meters]
 * https://simulationshub.com/ball-drop/[interactive ball]
 * https://www.physicslens.com/simulation-of-a-bouncing-ball/
+* https://www.youtube.com/watch?v=hG9SzQxaCm8
