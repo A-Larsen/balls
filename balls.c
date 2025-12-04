@@ -134,13 +134,13 @@ updateMain(Game *game,
     static int initial_x = 400;
     static int max_height = 400;
     static float e = 0.9;
+    static int sub = 0;
     // this is the fromula for height but it is not usefull in this situation
     // because we could just check it by looking at center.y
     // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds *
     // seconds);
-
-    circle.velocities.y = GRAVITY * seconds;
-    circle.velocities.x = 0 * seconds;
+    circle.velocities.x = 0 * (seconds - sub);
+    circle.velocities.y = GRAVITY * (seconds - sub);
 
     // float restitution  = e * velocity;
     // trying to find height this way
@@ -149,8 +149,10 @@ updateMain(Game *game,
     //
     // might not be useful because the height is inverted.
     
-    circle.center.y = circle.velocities.y * (circle.vertical ? 1 : -1) + initial_y;
-    circle.center.x = circle.velocities.x * (circle.horizontal ? 1 : -1) + initial_x;
+    circle.center.y = circle.velocities.y * (circle.vertical ? 1 : -1)
+                      + initial_y;
+    circle.center.x = circle.velocities.x * (circle.horizontal ? 1 : -1) 
+                      + initial_x;
 
 
 
@@ -166,6 +168,7 @@ updateMain(Game *game,
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
     if (circle.center.y + circle.radius  > 800) {
+        sub = seconds;
         initial_y = circle.center.y;
         // restitution -= e;
         circle.vertical = false;
