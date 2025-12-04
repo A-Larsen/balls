@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <math.h>
+#include <SDL2/SDL_rect.h>
 
 // NOTE:
 // This is a less accurate depiction of gravity. I am using a different number
@@ -12,8 +13,6 @@
 // pixel. In order to depict this more accurately I would need an approximate
 // size of a pixel, and not every pixel is the same size. I have decided not to
 // be THAT accurate.
-#define SCREEN_WIDTH_PX 800U
-#define SCREEN_HEIGHT_PX 800U
 #define METER_AS_PIXELS 3779U
 #define GRAVITY 90U
 
@@ -25,6 +24,8 @@
     } \
 
 #define SDL_main main
+
+const SDL_Rect screen_rect = {.x = 0, .y = 0, .w = 800, .h = 800};
 
 typedef struct _Game {
     SDL_Renderer *renderer;
@@ -81,6 +82,29 @@ drawCircle(SDL_Renderer *renderer,
     }
 }
 
+void
+checkCircleCollision(int radius,
+                     SDL_Point center)
+{
+    float x = 0;
+    float y = 0;
+
+    for(float i = 0; i < 2 * M_PI; i += 0.001f)
+    {
+        x = cosf(i);
+        y = sinf(i);
+        SDL_Rect point = {
+            .x = (x * radius) + center.x, 
+            .y = (y * radius) + center.y,
+            .w = 1, 
+            .h = 1
+        };
+    // SDL_HasRectIntersection(&screen_rect);
+    }
+
+
+}
+
 static uint8_t
 updateMain(Game *game,
            float seconds,
@@ -92,7 +116,7 @@ updateMain(Game *game,
     static int initial_height = 400;
     float velocity = GRAVITY * seconds;
     float e = 0.9;
-    float restitution  = e * velocity;
+    // float restitution  = e * velocity;
     // trying to find height this way
     //
     //     t = sqrt(2h/g)
@@ -102,7 +126,8 @@ updateMain(Game *game,
     center.y = velocity + initial_height;
     // this is the fromula for height but it is not usefull in this situation
     // because we could just check it by looking at center.y
-    // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds * seconds);
+    // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds *
+    // seconds);
 
     // * Rubber ball: (e \approx 0.8 - 0.9)
     // * Basketball: (e \approx 0.75)
@@ -111,8 +136,9 @@ updateMain(Game *game,
     // TODO
     // this should be used be added everytime the ball hits the ground
 
+    // SDL_HasRectIntersection(&screen_rect);
     printf("velocity: %f\n", velocity);
-    printf("restitution: %f\n", restitution);
+    // printf("restitution: %f\n", restitution);
     drawCircle(game->renderer, 15, center, COLOR_RED);
     return UPDATE_MAIN;
 }
@@ -121,7 +147,7 @@ void
 Game_Update(Game *game,
             const uint8_t fps)
 // The main game loop. Sets up which callback will be used in the function loop.
-// Each update callback determined what update callback will be called next by
+// Each update callback determines what update callback will be called next by
 // returning the appropriate enum value
 {
     uint64_t frame = 0;
@@ -203,8 +229,8 @@ Game_Init(Game *game)
 
 
     game->window = SDL_CreateWindow("balls", SDL_WINDOWPOS_UNDEFINED, 
-                     SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH_PX, 
-                     SCREEN_HEIGHT_PX, SDL_WINDOW_SHOWN);
+                     SDL_WINDOWPOS_UNDEFINED, screen_rect.w, 
+                     screen_rect.h, SDL_WINDOW_SHOWN);
 
     END(game->window == NULL, "Could not create window", SDL_GetError());
 

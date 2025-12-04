@@ -225,4 +225,3 @@ If you want, I can also show:
 * collisions with walls
 * 2D physics with vectors
 * full game loop frameworks for SDL, Raylib, or OpenGL
-
