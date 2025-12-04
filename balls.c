@@ -93,13 +93,13 @@ bool circleRectCollide(SDL_Point circle,
                        float r,
                        SDL_Rect rect)
 {
-    float closestX = clamp(circle.x - r, rect.x, rect.x + rect.w);
+    float closestX = clamp(circle.x + r, rect.x, rect.x + rect.w);
     float closestY = clamp(circle.y + r, rect.y, rect.y + rect.h);
 
     // this gets the distance form the center of the circle to a side of a
     // rectangle. It could be negative or positive. Because we are squaring them
     // it doesn't matter.
-    float dx = circle.x - r - closestX;
+    float dx = circle.x + r - closestX;
     float dy = circle.y + r - closestY;
 
     // use the dot product to determine collision
