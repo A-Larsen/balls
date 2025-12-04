@@ -3,11 +3,19 @@
 #include <stdbool.h>
 #include <SDL2/SDL_ttf.h>
 #include <assert.h>
+#include <stdint.h>
+#include <math.h>
 
+// NOTE:
+// This is a less accurate depiction of gravity. I am using 10 as the
+// mesurement in meters per second because you cannot have fractions of a pixel.
+// In order to depict this more accurately I would need an approximate size of a
+// pixel, and not every pixel is the same size. I have decided not to be THAT
+// accurate.
 #define SCREEN_WIDTH_PX 800U
 #define SCREEN_HEIGHT_PX 800U
 #define METER_AS_PIXELS 3779U
-#define GRAVITY 9.81f
+#define GRAVITY 10U
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -23,7 +31,7 @@ typedef struct _Game {
     SDL_Window *window;
 } Game;
 
-typedef uint8_t (*Update_callback)(Game *game, uint64_t frame, SDL_KeyCode key,
+typedef uint8_t (*Update_callback)(Game *game, float seconds, uint64_t frame, SDL_KeyCode key,
                                    bool keydown);
 
 enum {UPDATE_MAIN};
@@ -65,13 +73,29 @@ drawCircle(SDL_Renderer *renderer, int radius, SDL_Point center, uint8_t color)
 }
 
 static uint8_t
-updateMain(Game *game, uint64_t frame, SDL_KeyCode key, bool keydown)
+updateMain(Game *game, float seconds, uint64_t frame, SDL_KeyCode key, bool keydown)
 {
     static SDL_Point center = {.x = 400, .y = 400};
-    static int inc = GRAVITY;
-    // need to 
-    center.y += inc;
-    printf("inc: %f\n", inc);
+    static int initial_height = 400;
+    // t = sqrt(2h/g)
+    
+    center.y += GRAVITY;
+    // this is the fromula for height but it is not usefull in this situation
+    // because we could just check it by looking at center.y
+    // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds * seconds);
+
+    float velocity = GRAVITY * seconds;
+    // * Rubber ball: (e \approx 0.8 - 0.9)
+    // * Basketball: (e \approx 0.75)
+    // * Tennis ball: (e \approx 0.6)
+    float e = 0.9;
+
+    // TODO
+    // this should be used be added everytime the ball hits the ground
+    float restitution  = e * velocity;
+
+    printf("velocity: %f\n", velocity);
+    printf("restitution: %f\n", restitution);
     drawCircle(game->renderer, 15, center, COLOR_RED);
     return UPDATE_MAIN;
 }
@@ -126,7 +150,7 @@ Game_Update(Game *game, const uint8_t fps)
             }
         }
 
-        update_id = update(game, frame, key, keydown);
+        update_id = update(game, seconds, frame, key, keydown);
 
         uint32_t end = SDL_GetTicks();
         uint32_t elapsed_time = end - start;
