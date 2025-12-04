@@ -77,7 +77,11 @@ updateMain(Game *game, float seconds, uint64_t frame, SDL_KeyCode key, bool keyd
 {
     static SDL_Point center = {.x = 400, .y = 400};
     static int initial_height = 400;
-    // t = sqrt(2h/g)
+    // trying to find height this way
+    //
+    //     t = sqrt(2h/g)
+    //
+    // might not be useful because the height is inverted.
     
     center.y += GRAVITY;
     // this is the fromula for height but it is not usefull in this situation
