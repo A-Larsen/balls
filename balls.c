@@ -30,6 +30,7 @@ const SDL_Rect screen_rect = {.x = 0, .y = 0, .w = 800, .h = 800};
 typedef struct _Game {
     SDL_Renderer *renderer;
     SDL_Window *window;
+    bool out_of_bounds;
 } Game;
 
 typedef uint8_t (*Update_callback) (Game *game, 
@@ -88,15 +89,18 @@ float clamp(float v, float min, float max) {
     return v;
 }
 
-bool circleRectCollide(SDL_Point circle, float r,
+bool circleRectCollide(SDL_Point circle,
+                       float r,
                        SDL_Rect rect)
 {
-    // does this assume that circle x and circle y are the center of the circle?
-    float closestX = clamp(circle.x, rect.x, rect.x + rect.w);
-    float closestY = clamp(circle.y, rect.y, rect.y + rect.h);
+    float closestX = clamp(circle.x - r, rect.x, rect.x + rect.w);
+    float closestY = clamp(circle.y + r, rect.y, rect.y + rect.h);
 
-    float dx = circle.x - closestX;
-    float dy = circle.y - closestY;
+    // this gets the distance form the center of the circle to a side of a
+    // rectangle. It could be negative or positive. Because we are squaring them
+    // it doesn't matter.
+    float dx = circle.x - r - closestX;
+    float dy = circle.y + r - closestY;
 
     // use the dot product to determine collision
     return (dx*dx + dy*dy) <= (r*r);
@@ -113,7 +117,7 @@ updateMain(Game *game,
     static int initial_height = 400;
     float velocity = GRAVITY * seconds;
     float e = 0.9;
-    const float circle_radius = 15;
+    const float circle_radius = 30;
     // float restitution  = e * velocity;
     // trying to find height this way
     //
@@ -133,12 +137,12 @@ updateMain(Game *game,
 
     // TODO
     // this should be used be added everytime the ball hits the ground
-    bool out_of_bounds =
+     game->out_of_bounds =
         !circleRectCollide(center, circle_radius, screen_rect);
 
     // SDL_HasRectIntersection(&screen_rect);
     printf("velocity: %f\n", velocity);
-    printf("out of bounds: %d\n", out_of_bounds);
+    printf("out of bounds: %d\n", game->out_of_bounds);
     // printf("restitution: %f\n", restitution);
     drawCircle(game->renderer, circle_radius, center, COLOR_RED);
     return UPDATE_MAIN;
@@ -162,12 +166,14 @@ Game_Update(Game *game,
     SDL_KeyCode key = 0;
     uint32_t end = 0;
     uint32_t elapsed_time = 0;
+    uint8_t color = COLOR_BLACK;
 
 
     while (!quit) {
         uint32_t start = SDL_GetTicks();
         // clear screen
-        setColor(game->renderer, COLOR_BLACK);
+        if (game->out_of_bounds) color = COLOR_GREEN;
+        setColor(game->renderer, color);
         SDL_RenderClear(game->renderer);
         // TODO:
         // find milliseconds so you can update gravity more acurately
