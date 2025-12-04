@@ -6,6 +6,8 @@
 
 #define SCREEN_WIDTH_PX 800U
 #define SCREEN_HEIGHT_PX 800U
+#define METER_AS_PIXELS 3779U
+#define GRAVITY 9.81f
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -65,7 +67,11 @@ drawCircle(SDL_Renderer *renderer, int radius, SDL_Point center, uint8_t color)
 static uint8_t
 updateMain(Game *game, uint64_t frame, SDL_KeyCode key, bool keydown)
 {
-    SDL_Point center = {.x = 400, .y = 400};
+    static SDL_Point center = {.x = 400, .y = 400};
+    static int inc = GRAVITY;
+    // need to 
+    center.y += inc;
+    printf("inc: %f\n", inc);
     drawCircle(game->renderer, 15, center, COLOR_RED);
     return UPDATE_MAIN;
 }
@@ -79,9 +85,20 @@ Game_Update(Game *game, const uint8_t fps)
     uint8_t update_id = 0;
     Update_callback update;
     float mspd = (1.0f / (float)fps) * 1000.0f;
+    float seconds = 0;
+
 
     while (!quit) {
         uint32_t start = SDL_GetTicks();
+        // clear screen
+        setColor(game->renderer, COLOR_BLACK);
+        SDL_RenderClear(game->renderer);
+        // TODO:
+        // find milliseconds so you can update gravity more acurately
+        // (1 / frame)
+        seconds = ((float)frame / (float)fps);
+        // printf("%lu: %f\n", frame, seconds);
+ 
 
         // Place update functions here
         switch (update_id) {
