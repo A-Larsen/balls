@@ -33,6 +33,12 @@ typedef struct _Game {
     bool out_of_bounds;
 } Game;
 
+typedef struct _Circle {
+   SDL_Point center; 
+   SDL_Point velocities;
+   uint16_t radius;
+} Circle;
+
 typedef uint8_t (*Update_callback) (Game *game, 
                                     float seconds, 
                                     uint64_t frame,
@@ -113,11 +119,22 @@ updateMain(Game *game,
            SDL_KeyCode key,
            bool keydown)
 {
-    static SDL_Point center = {.x = 400, .y = 400};
-    static int initial_height = 400;
-    float velocity = GRAVITY * seconds;
+    // * Rubber ball: (e \approx 0.8 - 0.9)
+    // * Basketball: (e \approx 0.75)
+    // * Tennis ball: (e \approx 0.6)
+    static int initial_y = 400;
+    static int initial_x = 400;
     float e = 0.9;
-    const float circle_radius = 30;
+    // this is the fromula for height but it is not usefull in this situation
+    // because we could just check it by looking at center.y
+    // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds *
+    // seconds);
+
+    Circle circle = {
+        .center = {.x = 400, .y = 400},
+        .velocities = {.y = GRAVITY * seconds, .x = 0 * seconds},
+        .radius = 30
+    };
     // float restitution  = e * velocity;
     // trying to find height this way
     //
@@ -125,26 +142,21 @@ updateMain(Game *game,
     //
     // might not be useful because the height is inverted.
     
-    center.y = velocity + initial_height;
-    // this is the fromula for height but it is not usefull in this situation
-    // because we could just check it by looking at center.y
-    // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds *
-    // seconds);
+    circle.center.y = circle.velocities.y + initial_y;
+    circle.center.x = circle.velocities.x + initial_x;
 
-    // * Rubber ball: (e \approx 0.8 - 0.9)
-    // * Basketball: (e \approx 0.75)
-    // * Tennis ball: (e \approx 0.6)
+
 
     // TODO
     // this should be used be added everytime the ball hits the ground
      game->out_of_bounds =
-        !circleRectCollide(center, circle_radius, screen_rect);
+        !circleRectCollide(circle.center, circle.radius, screen_rect);
 
     // SDL_HasRectIntersection(&screen_rect);
-    printf("velocity: %f\n", velocity);
+    // printf("velocity: %f\n", velocity);
     printf("out of bounds: %d\n", game->out_of_bounds);
     // printf("restitution: %f\n", restitution);
-    drawCircle(game->renderer, circle_radius, center, COLOR_RED);
+    drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
     return UPDATE_MAIN;
 }
 
@@ -261,7 +273,7 @@ main(void)
 {
     Game game;
     Game_Init(&game);
-    Game_Update(&game, 60);
+    Game_Update(&game, 220);
     Game_Quit(&game);
     return 0;
 }
