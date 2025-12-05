@@ -154,18 +154,26 @@ updateMain(Game *game,
     static float restitution = 1;
     static float f = 0;
     static float initial_velocity = 0;
+    static float velocity = 0;
+
 
     if (circle.vertical) { // falling downward
-        circle.center.y = y += (game->gravity * f) * restitution * (circle.vertical ? 1 : -1);
+        velocity += game->gravity * f;
     } else { // bouncing upward
+        // velocity -= game->gravity / f;
+        // velocity += ingame->gravity * f;
+        velocity -= 1 * restitution - (game->gravity * f);
+        printf("%f\n", initial_velocity);
 
     }
+    circle.center.y = y + velocity;
+
     // float g = (float)game->gravity / ((float)game->fps);
     float height = initial_y + (0.5f * game->gravity) * (f * f);
     float time = sqrt(2 * (initial_y - circle.radius) / game->gravity);
     // printf("%f\n", seconds);
     // printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
-    printf("%f %f\n", time, f);
+    // printf("%f %f\n", time, f);
     // printf("%lu\n", frame);
     // printf("%f\n", max_velocity);
     // printf("%d\n", circle.center.y);
@@ -175,13 +183,14 @@ updateMain(Game *game,
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
      if (f > time) {
-         // f = 0;
+         f = 0;
          // printf("yes\n");
-         initial_velocity = circle.center.y;
+         initial_velocity = velocity;
+         velocity = initial_velocity;
          circle.vertical = false;
          // TODO get the final velocity that can be applied upward and then to
          // have gravity act on it.
-         // restitution *= e;
+         restitution *= e;
          // return UPDATE_NOTHING;
      }
      f++;
