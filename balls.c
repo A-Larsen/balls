@@ -182,7 +182,7 @@ updateMain(Game *game,
         !circleRectCollide(circle.center, circle.radius, screen_rect);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
-     if (f > time) {
+     if (f > time && circle.vertical) {
          f = 0;
          // printf("yes\n");
          initial_velocity = velocity;
