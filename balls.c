@@ -150,7 +150,7 @@ updateMain(Game *game,
     };
     static float initial_y = 400;
     static float y = 400;
-    static float e = .99;
+    static float e = .9;
     static float restitution = 1;
     static float f = 0;
     static float initial_velocity = 0;
