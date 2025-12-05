@@ -31,6 +31,7 @@ typedef struct _Game {
     SDL_Renderer *renderer;
     SDL_Window *window;
     bool out_of_bounds;
+    uint16_t fps;
 } Game;
 
 typedef struct _Circle {
@@ -135,7 +136,7 @@ updateMain(Game *game,
     static float initial_y = 400;
     circle.center.y = initial_y += GRAVITY;
     float height = // not 100% accurate but close
-        floor(initial_y - (0.5f * (float)GRAVITY * (seconds * seconds)));
+        floor(initial_y - (0.5f * (float)(GRAVITY / ((float)game->fps)) * (seconds * seconds)));
     printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
 
      game->out_of_bounds =
@@ -146,8 +147,7 @@ updateMain(Game *game,
 }
 
 void
-Game_Update(Game *game,
-            const uint16_t fps)
+Game_Update(Game *game)
 // The main game loop. Sets up which callback will be used in the function loop.
 // Each update callback determines what update callback will be called next by
 // returning the appropriate enum value
@@ -157,7 +157,7 @@ Game_Update(Game *game,
     bool keydown = false;
     uint8_t update_id = 0;
     Update_callback update;
-    float mspd = (1.0f / (float)fps) * 1000.0f;
+    float mspd = (1.0f / (float)game->fps) * 1000.0f;
     float seconds = 0;
     SDL_Event event;
     SDL_KeyCode key = 0;
@@ -175,7 +175,7 @@ Game_Update(Game *game,
         // TODO:
         // find milliseconds so you can update gravity more acurately
         // (1 / frame)
-        seconds = ((float)frame / (float)fps);
+        seconds = ((float)frame / (float)game->fps);
         // printf("%lu: %f\n", frame, seconds);
  
 
@@ -242,6 +242,7 @@ Game_Init(Game *game)
                                         SDL_RENDERER_SOFTWARE);
 
     END(game->renderer == NULL, "Could not create renderer", SDL_GetError());
+    game->fps = 120;
 }
 
 void
@@ -258,7 +259,7 @@ main(void)
 {
     Game game;
     Game_Init(&game);
-    Game_Update(&game, 400);
+    Game_Update(&game);
     Game_Quit(&game);
     return 0;
 }
