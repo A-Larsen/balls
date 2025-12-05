@@ -135,8 +135,8 @@ updateMain(Game *game,
     };
     static float initial_y = 400;
     circle.center.y = initial_y += GRAVITY;
-    float height = // not 100% accurate but close
-        floor(initial_y - (0.5f * (float)(GRAVITY / ((float)game->fps)) * (seconds * seconds)));
+    float height = initial_y + (0.5f * (float)(GRAVITY / ((float)game->fps)) *
+                   (seconds * seconds));
     printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
 
      game->out_of_bounds =
