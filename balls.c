@@ -149,7 +149,7 @@ updateMain(Game *game,
     circle.center.y = y += game->gravity;
     float g = (float)game->gravity / ((float)game->fps);
     float height = y + (0.5f * g) * (seconds * seconds);
-    float time = sqrt(2*initial_y/g);
+    float time = sqrt(2*(initial_y + circle.radius)/g);
     // printf("%f\n", seconds);
     // printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
     // printf("%f\n", time);
