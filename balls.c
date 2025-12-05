@@ -135,7 +135,8 @@ updateMain(Game *game,
            bool keydown)
 {
     // TODO:
-    // incorperate terminal velocity
+    // * incorperate terminal velocity
+    // * make sure ball doesn't go through ground
 
     // as long as gravity and time are using the same units the fomrulas will
     // work. in this case we will do frames as out unit
@@ -150,7 +151,7 @@ updateMain(Game *game,
     };
     static float initial_y = 400;
     static float y = 400;
-    static float e = .8;
+    static float e = .9;
     static float restitution = 1;
     static float f = 0;
     static float initial_velocity = 0;
@@ -163,11 +164,11 @@ updateMain(Game *game,
         // velocity -= game->gravity / f;
         // velocity += ingame->gravity * f;
         velocity -= restitution - (game->gravity * f);
-        printf("%f\n", velocity);
         // initial_y = circle.center.y;
 
     }
     circle.center.y = y + velocity;
+        printf("%f\n", velocity);
 
     // float g = (float)game->gravity / ((float)game->fps);
     float height = initial_y + (0.5f * game->gravity) * (f * f);
@@ -184,7 +185,7 @@ updateMain(Game *game,
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
      // if (f > time && circle.vertical) {
-     if (circle.center.y + circle.radius > screen_rect.h) {
+     if (circle.center.y + circle.radius >= screen_rect.h) {
          f = 0;
          // printf("yes\n");
          initial_velocity = velocity;
