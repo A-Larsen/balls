@@ -158,12 +158,12 @@ updateMain(Game *game,
 
 
     if (circle.vertical) { // falling downward
-        velocity += game->gravity * f;
+        velocity += (game->gravity * f) * restitution;
     } else { // bouncing upward
         // velocity -= game->gravity / f;
         // velocity += ingame->gravity * f;
-        velocity -= 1 * restitution - (game->gravity * f);
-        printf("%f\n", initial_velocity);
+        velocity -= restitution - (game->gravity * f);
+        printf("%f\n", velocity);
         // initial_y = circle.center.y;
 
     }
@@ -183,7 +183,8 @@ updateMain(Game *game,
         !circleRectCollide(circle.center, circle.radius, screen_rect);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
-     if (f > time && circle.vertical) {
+     // if (f > time && circle.vertical) {
+     if (circle.center.y + circle.radius > screen_rect.h) {
          f = 0;
          // printf("yes\n");
          initial_velocity = velocity;
