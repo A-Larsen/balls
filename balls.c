@@ -14,7 +14,7 @@
 // size of a pixel, and not every pixel is the same size. I have decided not to
 // be THAT accurate.
 #define METER_AS_PIXELS 3779U
-#define GRAVITY 0.2f
+// #define GRAVITY 0.5f
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -32,6 +32,7 @@ typedef struct _Game {
     SDL_Window *window;
     bool out_of_bounds;
     uint16_t fps;
+    float gravity;
 } Game;
 
 typedef struct _Circle {
@@ -134,14 +135,21 @@ updateMain(Game *game,
         .horizontal = true,
     };
     static float initial_y = 400;
-    circle.center.y = initial_y += GRAVITY;
-    float height = initial_y + (0.5f * (float)(GRAVITY / ((float)game->fps)) *
-                   (seconds * seconds));
-    printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
+    static float y = 400;
+    circle.center.y = y += game->gravity;
+    float g = (float)game->gravity / ((float)game->fps);
+    float height = y + (0.5f * g) * (seconds * seconds);
+    float time = sqrt(2*initial_y/g);
+    // printf("%f\n", seconds);
+    // printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
+    // printf("%f\n", time);
+    // printf("%lu\n", frame);
 
      game->out_of_bounds =
         !circleRectCollide(circle.center, circle.radius, screen_rect);
-    drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
+     if (!(frame - 1 > time)) {
+        drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
+     }
 
     return UPDATE_MAIN;
 }
@@ -164,7 +172,6 @@ Game_Update(Game *game)
     uint32_t end = 0;
     uint32_t elapsed_time = 0;
     uint8_t color = COLOR_BLACK;
-
 
     while (!quit) {
         uint32_t start = SDL_GetTicks();
@@ -242,7 +249,8 @@ Game_Init(Game *game)
                                         SDL_RENDERER_SOFTWARE);
 
     END(game->renderer == NULL, "Could not create renderer", SDL_GetError());
-    game->fps = 120;
+    game->fps = 400;
+    game->gravity  = 0.4f;
 }
 
 void
