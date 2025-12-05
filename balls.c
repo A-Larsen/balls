@@ -33,6 +33,7 @@ typedef struct _Game {
     bool out_of_bounds;
     uint16_t fps;
     float gravity;
+    float terminal_velocity;
 } Game;
 
 typedef struct _Circle {
@@ -133,6 +134,9 @@ updateMain(Game *game,
            SDL_KeyCode key,
            bool keydown)
 {
+    // TODO:
+    // incorperate terminal velocity
+
     // as long as gravity and time are using the same units the fomrulas will
     // work. in this case we will do frames as out unit
     // * Rubber ball: (e \approx 0.8 - 0.9)
@@ -274,6 +278,7 @@ Game_Init(Game *game)
 
     END(game->renderer == NULL, "Could not create renderer", SDL_GetError());
     game->fps = 400;
+    // game->terminal_velocity = 
     game->gravity  = 0.002f;
 }
 
