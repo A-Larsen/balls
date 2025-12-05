@@ -153,9 +153,10 @@ updateMain(Game *game,
     circle.center.y = y += (game->gravity * f) * restitution * (circle.vertical ? 1 : -1);
     // float g = (float)game->gravity / ((float)game->fps);
     float height = initial_y + (0.5f * game->gravity) * (f * f);
+    float time = sqrt(2 * (initial_y - circle.radius) / game->gravity);
     // printf("%f\n", seconds);
-    printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
-    // printf("%f\n", time);
+    // printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
+    printf("%f %f\n", time, f);
     // printf("%lu\n", frame);
     // printf("%f\n", max_velocity);
     // printf("%d\n", circle.center.y);
@@ -164,13 +165,13 @@ updateMain(Game *game,
         !circleRectCollide(circle.center, circle.radius, screen_rect);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
-     // if (f > time) {
-     //     f = 0;
-     //     printf("yes\n");
-     //     circle.vertical = false;
-     //     restitution *= e;
-     //     // return UPDATE_NOTHING;
-     // }
+     if (f > time) {
+         // f = 0;
+         // printf("yes\n");
+         circle.vertical = false;
+         // restitution *= e;
+         // return UPDATE_NOTHING;
+     }
      f++;
 
     return UPDATE_MAIN;
@@ -273,7 +274,7 @@ Game_Init(Game *game)
 
     END(game->renderer == NULL, "Could not create renderer", SDL_GetError());
     game->fps = 400;
-    game->gravity  = 0.003f;
+    game->gravity  = 0.002f;
 }
 
 void
