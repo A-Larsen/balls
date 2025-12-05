@@ -49,7 +49,7 @@ typedef uint8_t (*Update_callback) (Game *game,
                                     SDL_KeyCode key,
                                     bool keydown);
 
-enum {UPDATE_MAIN};
+enum {UPDATE_MAIN, UPDATE_NOTHING};
 
 enum {COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_ORANGE, COLOR_GREY,
       COLOR_BLACK, COLOR_SIZE};
@@ -117,6 +117,16 @@ bool circleRectCollide(SDL_Point circle,
 }
 
 static uint8_t
+updateNothing(Game *game,
+           float seconds,
+           uint64_t frame,
+           SDL_KeyCode key,
+           bool keydown)
+{
+    return UPDATE_NOTHING;
+}
+
+static uint8_t
 updateMain(Game *game,
            float seconds,
            uint64_t frame,
@@ -147,8 +157,10 @@ updateMain(Game *game,
 
      game->out_of_bounds =
         !circleRectCollide(circle.center, circle.radius, screen_rect);
-     if (!(frame - 1 > time)) {
-        drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
+    drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
+
+     if (frame > time) {
+         return UPDATE_NOTHING;
      }
 
     return UPDATE_MAIN;
@@ -189,6 +201,7 @@ Game_Update(Game *game)
         // Place update functions here
         switch (update_id) {
             case UPDATE_MAIN: update = updateMain; break;
+            case UPDATE_NOTHING: update = updateNothing; break;
             // case UPDATE_LOSE: update = updateLose; break;
         }
 
