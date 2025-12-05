@@ -150,7 +150,7 @@ updateMain(Game *game,
     };
     static float initial_y = 400;
     static float y = 400;
-    static float e = .9;
+    static float e = .8;
     static float restitution = 1;
     static float f = 0;
     static float initial_velocity = 0;
@@ -158,7 +158,7 @@ updateMain(Game *game,
 
 
     if (circle.vertical) { // falling downward
-        velocity += (game->gravity * f) * restitution;
+        velocity += (game->gravity * f);
     } else { // bouncing upward
         // velocity -= game->gravity / f;
         // velocity += ingame->gravity * f;
@@ -298,7 +298,7 @@ Game_Init(Game *game)
     END(game->renderer == NULL, "Could not create renderer", SDL_GetError());
     game->fps = 400;
     // game->terminal_velocity = 
-    game->gravity  = 0.002f;
+    game->gravity  = 0.004f;
 }
 
 void
