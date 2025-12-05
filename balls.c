@@ -14,7 +14,7 @@
 // size of a pixel, and not every pixel is the same size. I have decided not to
 // be THAT accurate.
 #define METER_AS_PIXELS 3779U
-#define GRAVITY 90U
+#define GRAVITY 0.2f
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -121,6 +121,8 @@ updateMain(Game *game,
            SDL_KeyCode key,
            bool keydown)
 {
+    // as long as gravity and time are using the same units the fomrulas will
+    // work. in this case we will do frames as out unit
     // * Rubber ball: (e \approx 0.8 - 0.9)
     // * Basketball: (e \approx 0.75)
     // * Tennis ball: (e \approx 0.6)
@@ -130,55 +132,22 @@ updateMain(Game *game,
         .vertical = true,
         .horizontal = true,
     };
-    static int initial_y = 400;
-    static int initial_x = 400;
-    static int max_height = 400;
-    static float e = 0.9;
-    static int sub = 0;
-    // this is the fromula for height but it is not usefull in this situation
-    // because we could just check it by looking at center.y
-    // float height = (float)initial_height - .5 * (float)GRAVITY * (seconds *
-    // seconds);
-    circle.velocities.x = 0 * (seconds - sub);
-    circle.velocities.y = GRAVITY * (seconds - sub);
+    static float initial_y = 400;
+    circle.center.y = initial_y += GRAVITY;
+    float height = // not 100% accurate but close
+        floor(initial_y - (0.5f * (float)GRAVITY * (seconds * seconds)));
+    printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
 
-    // float restitution  = e * velocity;
-    // trying to find height this way
-    //
-    //     t = sqrt(2h/g)
-    //
-    // might not be useful because the height is inverted.
-    
-    circle.center.y = circle.velocities.y * (circle.vertical ? 1 : -1)
-                      + initial_y;
-    circle.center.x = circle.velocities.x * (circle.horizontal ? 1 : -1) 
-                      + initial_x;
-
-
-
-    // TODO
-    // this should be used be added everytime the ball hits the ground
      game->out_of_bounds =
         !circleRectCollide(circle.center, circle.radius, screen_rect);
-
-    // SDL_HasRectIntersection(&screen_rect);
-    // printf("velocity: %f\n", velocity);
-    // printf("out of bounds: %d\n", game->out_of_bounds);
-    // printf("restitution: %f\n", restitution);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
-    if (circle.center.y + circle.radius  > 800) {
-        sub = seconds;
-        initial_y = circle.center.y;
-        // restitution -= e;
-        circle.vertical = false;
-    }
     return UPDATE_MAIN;
 }
 
 void
 Game_Update(Game *game,
-            const uint8_t fps)
+            const uint16_t fps)
 // The main game loop. Sets up which callback will be used in the function loop.
 // Each update callback determines what update callback will be called next by
 // returning the appropriate enum value
@@ -289,7 +258,7 @@ main(void)
 {
     Game game;
     Game_Init(&game);
-    Game_Update(&game, 220);
+    Game_Update(&game, 400);
     Game_Quit(&game);
     return 0;
 }
