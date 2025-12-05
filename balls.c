@@ -153,8 +153,13 @@ updateMain(Game *game,
     static float e = .99;
     static float restitution = 1;
     static float f = 0;
+    static float initial_velocity = 0;
 
-    circle.center.y = y += (game->gravity * f) * restitution * (circle.vertical ? 1 : -1);
+    if (circle.vertical) { // falling downward
+        circle.center.y = y += (game->gravity * f) * restitution * (circle.vertical ? 1 : -1);
+    } else { // bouncing upward
+
+    }
     // float g = (float)game->gravity / ((float)game->fps);
     float height = initial_y + (0.5f * game->gravity) * (f * f);
     float time = sqrt(2 * (initial_y - circle.radius) / game->gravity);
@@ -172,6 +177,7 @@ updateMain(Game *game,
      if (f > time) {
          // f = 0;
          // printf("yes\n");
+         initial_velocity = circle.center.y;
          circle.vertical = false;
          // TODO get the final velocity that can be applied upward and then to
          // have gravity act on it.
