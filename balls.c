@@ -146,21 +146,25 @@ updateMain(Game *game,
     };
     static float initial_y = 400;
     static float y = 400;
-    circle.center.y = y += game->gravity;
+    circle.center.y = y += game->gravity * (circle.vertical ? 1 : -1);
     float g = (float)game->gravity / ((float)game->fps);
     float height = y + (0.5f * g) * (seconds * seconds);
     float time = sqrt(2*(initial_y + circle.radius)/g);
+    float max_velocity = g*time;
     // printf("%f\n", seconds);
     // printf("%f %d\n", height + circle.radius, circle.center.y + circle.radius);
     // printf("%f\n", time);
     // printf("%lu\n", frame);
+    printf("%f\n", max_velocity);
+    printf("%d\n", circle.center.y);
 
      game->out_of_bounds =
         !circleRectCollide(circle.center, circle.radius, screen_rect);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
      if (frame > time) {
-         return UPDATE_NOTHING;
+         circle.vertical = false;
+         // return UPDATE_NOTHING;
      }
 
     return UPDATE_MAIN;
