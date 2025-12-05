@@ -146,7 +146,11 @@ updateMain(Game *game,
     };
     static float initial_y = 400;
     static float y = 400;
-    circle.center.y = y += game->gravity * (circle.vertical ? 1 : -1);
+    static float e = .99;
+    static float restitution = 1;
+    static float f = 0;
+
+    circle.center.y = y += game->gravity * restitution * (circle.vertical ? 1 : -1);
     float g = (float)game->gravity / ((float)game->fps);
     float height = y + (0.5f * g) * (seconds * seconds);
     float time = sqrt(2*(initial_y + circle.radius)/g);
@@ -162,10 +166,14 @@ updateMain(Game *game,
         !circleRectCollide(circle.center, circle.radius, screen_rect);
     drawCircle(game->renderer, circle.radius, circle.center, COLOR_RED);
 
-     if (frame > time) {
+     if (f > time) {
+         f = 0;
+         printf("yes\n");
          circle.vertical = false;
+         restitution *= e;
          // return UPDATE_NOTHING;
      }
+     f++;
 
     return UPDATE_MAIN;
 }
