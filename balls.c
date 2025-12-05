@@ -164,6 +164,7 @@ updateMain(Game *game,
         // velocity += ingame->gravity * f;
         velocity -= 1 * restitution - (game->gravity * f);
         printf("%f\n", initial_velocity);
+        // initial_y = circle.center.y;
 
     }
     circle.center.y = y + velocity;
