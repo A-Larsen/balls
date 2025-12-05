@@ -173,6 +173,8 @@ updateMain(Game *game,
          // f = 0;
          // printf("yes\n");
          circle.vertical = false;
+         // TODO get the final velocity that can be applied upward and then to
+         // have gravity act on it.
          // restitution *= e;
          // return UPDATE_NOTHING;
      }
