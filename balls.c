@@ -181,17 +181,9 @@ drawBall2(SDL_Surface *surface,
             // TODO: wrap circle around screen
             // SDL_RenderDrawPoint(renderer, px, py);
             SDL_Rect r = {.x = px, .y = py, .w = 1, .h = 1};
-            SDL_PixelFormat format;
-            // uint32_t color = SDL_MapRGBA(&format, colors[ball.color].r,
-            //         colors[ball.color].g, colors[ball.color].b, 
-            //         colors[ball.color].a);
-            //
-            // uint32_t color = 0x0000FFFF;
-            uint32_t color = 0;
-                color |= colors[ball.color].r << 24;
-                color |= colors[ball.color].g << 16;
-                color |= colors[ball.color].b << 8;
-                color |= colors[ball.color].a;
+            uint32_t color = 
+                ((colors[ball.color].r << 24) | (colors[ball.color].g << 16) |
+                 (colors[ball.color].b << 8) | colors[ball.color].a);
             SDL_FillRect(surface, &r, color);
 
           }
