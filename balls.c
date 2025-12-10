@@ -37,7 +37,7 @@ typedef struct _Mouse {
 
 typedef struct _Game {
     SDL_Renderer *renderer;
-    SDL_Renderer *backbuffer;
+    SDL_Surface *backbuffer;
     SDL_Window *window;
     const SDL_Rect screen_rect;
     Ball balls[BALL_COUNT];
@@ -65,23 +65,24 @@ enum {COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_ORANGE, COLOR_GREY,
       COLOR_PURPLE, COLOR_NEON_GREEN, COLOR_PINK, COLOR_YELLOW, COLOR_WHITE, 
       COLOR_BLACK, COLOR_SIZE};
 
+const SDL_Color colors[] = {
+    [COLOR_RED] = {.r = 217, .g = 100, .b = 89, .a = 255},
+    [COLOR_GREEN] = {.r = 88, .g = 140, .b = 126, .a = 255},
+    [COLOR_BLUE] = {.r = 39, .g = 211, .b = 245, .a = 255},
+    [COLOR_ORANGE] = {.r = 242, .g = 174, .b = 114, .a = 255},
+    [COLOR_GREY] = {.r = 89, .g = 89, .b = 89, .a = 89},
+    [COLOR_YELLOW] = {.r = 230, .g = 240, .b = 0, .a = 255},
+    [COLOR_PINK] = {.r = 245, .g = 39, .b = 108, .a = 255},
+    [COLOR_NEON_GREEN] = {.r = 39, .g = 245, .b = 176, .a = 255},
+    [COLOR_PURPLE] = {.r = 176, .g = 39, .b = 245, .a = 255},
+    [COLOR_WHITE] = {.r = 255, .g = 255, .b = 255, .a = 255},
+    [COLOR_BLACK] = {.r = 0, .g = 0, .b = 0, .a = 0},
+};
+
 void
 setColor(SDL_Renderer *renderer,
          uint8_t color)
 {
-    const SDL_Color colors[] = {
-        [COLOR_RED] = {.r = 217, .g = 100, .b = 89, .a = 255},
-        [COLOR_GREEN] = {.r = 88, .g = 140, .b = 126, .a = 255},
-        [COLOR_BLUE] = {.r = 39, .g = 211, .b = 245, .a = 255},
-        [COLOR_ORANGE] = {.r = 242, .g = 174, .b = 114, .a = 255},
-        [COLOR_GREY] = {.r = 89, .g = 89, .b = 89, .a = 89},
-        [COLOR_YELLOW] = {.r = 230, .g = 240, .b = 0, .a = 255},
-        [COLOR_PINK] = {.r = 245, .g = 39, .b = 108, .a = 255},
-        [COLOR_NEON_GREEN] = {.r = 39, .g = 245, .b = 176, .a = 255},
-        [COLOR_PURPLE] = {.r = 176, .g = 39, .b = 245, .a = 255},
-        [COLOR_WHITE] = {.r = 255, .g = 255, .b = 255, .a = 255},
-        [COLOR_BLACK] = {.r = 0, .g = 0, .b = 0, .a = 0},
-    };
 
     SDL_SetRenderDrawColor(renderer, colors[color].r, colors[color].g,
                            colors[color].b, colors[color].a);
@@ -153,6 +154,45 @@ drawBall(SDL_Renderer *renderer,
 
             // TODO: wrap circle around screen
             SDL_RenderDrawPoint(renderer, px, py);
+
+          }
+        }
+    }
+}
+
+void
+drawBall2(SDL_Surface *surface,
+          Ball ball)
+// (x - h)^2 + (y - k)^2 = r^2
+// Drawing a circle with the standard circle formula.
+// There may be a more performant way to do this...
+{
+    // setColor(renderer, ball.color);
+
+    // diameter is radius * 2
+    for (int x = 0; x < ball.radius * 2; x++) {
+        for (int y = 0; y < ball.radius * 2; y++) {
+          if ( ((x - ball.radius) * (x - ball.radius)) +
+               ((y - ball.radius) * (y - ball.radius)) <=
+               ball.radius * ball.radius) {
+            int px = ball.px - ball.radius + x;
+            int py = ball.py - ball.radius + y;
+
+            // TODO: wrap circle around screen
+            // SDL_RenderDrawPoint(renderer, px, py);
+            SDL_Rect r = {.x = px, .y = py, .w = 1, .h = 1};
+            SDL_PixelFormat format;
+            // uint32_t color = SDL_MapRGBA(&format, colors[ball.color].r,
+            //         colors[ball.color].g, colors[ball.color].b, 
+            //         colors[ball.color].a);
+            //
+            // uint32_t color = 0x0000FFFF;
+            uint32_t color = 0;
+                color |= colors[ball.color].r << 24;
+                color |= colors[ball.color].g << 16;
+                color |= colors[ball.color].b << 8;
+                color |= colors[ball.color].a;
+            SDL_FillRect(surface, &r, color);
 
           }
         }
@@ -272,7 +312,6 @@ updateMain(Game *game,
         b->py = mouse.p.y;
     }  
 
-
     // TODO
     // set up a list of values that will not conflict for i and j in gameInit
     for (int i = 0; i < BALL_COUNT; ++i) {
@@ -299,25 +338,18 @@ updateMain(Game *game,
                 overlap * (float)(b1->py - b2->py) / distance;
         }
 
+        drawBall(game->renderer, *b1);
+        if (i == selected) {
+            drawCircle(game->renderer, b1->radius - 4, b1->px, b1->py, 2,
+                       COLOR_BLACK);
+            drawCircle(game->renderer, b1->radius - 2, b1->px, b1->py, 2,
+                       COLOR_WHITE);
+        }
     }
 
     // for (int i = 0; i < collision_count; ++i) {
 
     // }
-
-    // TODO
-    // only draw balls that are colliding
-
-    // everying else should be update with backbuffer
-    for (int i = 0; i < BALL_COUNT; ++i) {
-        Ball *b = &game->balls[i];
-        drawBall(game->renderer, *b);
-        if (i == selected) {
-            // SDL_Point center = {.x = b->px, .y}
-            drawCircle(game->renderer, b->radius - 4, b->px, b->py, 2, COLOR_BLACK);
-            drawCircle(game->renderer, b->radius - 2, b->px, b->py, 2, COLOR_WHITE);
-        }
-    }
 
     if (selected < 0) drawCursor(game->renderer, mouse.p);
     // TODO
@@ -391,7 +423,13 @@ Game_Update(Game *game)
 
         if ((SDL_GetTicks() - ticks_start) >= mspf) {
             ticks_start = SDL_GetTicks();
+            // SDL_SetRenderDrawBlendMode(game->renderer, SDL_BLENDMODE_NONE);
+            // SDL_Texture *texture =
+            //     SDL_CreateTextureFromSurface(game->renderer, game->backbuffer);
+            // SDL_RenderCopyEx(game->renderer, texture, NULL, &game->screen_rect,
+            //                 0, NULL, SDL_FLIP_NONE);
             SDL_RenderPresent(game->renderer);
+            // SDL_DestroyTexture(texture);
         }
 
         frame++;
@@ -416,6 +454,7 @@ void createBalls(Game *game) {
         b->color = (rand() / (float)RAND_MAX) * ((float)COLOR_SIZE - 2);
 
         b->mass = b->radius * 10;
+        // drawBall2(game->backbuffer, *b);
     }
 
 }
@@ -432,6 +471,7 @@ Game_Init()
         .fps = 60,
         .ball_size_min = 30,
         .ball_size_max = 50,
+        .backbuffer = NULL,
     };
 
     END(SDL_Init(SDL_INIT_VIDEO) != 0, "Could not create texture",
@@ -450,12 +490,14 @@ Game_Init()
     game.renderer =
         SDL_CreateRenderer(game.window, 0, SDL_RENDERER_ACCELERATED);
 
-    game.backbuffer =
-        SDL_CreateRenderer(game.window, 0, SDL_RENDERER_ACCELERATED);
-
     END(game.renderer == NULL, "Could not create renderer", SDL_GetError());
 
     SDL_SetRelativeMouseMode(true);
+
+    game.backbuffer = 
+            SDL_CreateRGBSurface(0, game.screen_rect.w, game.screen_rect.h, 
+                                 32, 0xFF000000, 0x00FF0000, 0x0000FF00,
+                                 0x000000FF);
 
     srand(time(NULL));
     createBalls(&game);
@@ -468,6 +510,7 @@ Game_Quit(Game *game)
 {
     SDL_DestroyWindow(game->window);
     SDL_DestroyRenderer(game->renderer);
+    SDL_FreeSurface(game->backbuffer);
     TTF_Quit();
     SDL_Quit();
 }
