@@ -62,8 +62,8 @@ enum {UPDATE_MAIN, UPDATE_NOTHING};
 
 // Make sure last color is always black
 enum {COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_ORANGE, COLOR_GREY,
-      COLOR_PURPLE, COLOR_NEON_GREEN, COLOR_PINK, COLOR_YELLOW, COLOR_BLACK,
-      COLOR_SIZE};
+      COLOR_PURPLE, COLOR_NEON_GREEN, COLOR_PINK, COLOR_YELLOW, COLOR_WHITE, 
+      COLOR_BLACK, COLOR_SIZE};
 
 void
 setColor(SDL_Renderer *renderer,
@@ -79,6 +79,7 @@ setColor(SDL_Renderer *renderer,
         [COLOR_PINK] = {.r = 245, .g = 39, .b = 108, .a = 255},
         [COLOR_NEON_GREEN] = {.r = 39, .g = 245, .b = 176, .a = 255},
         [COLOR_PURPLE] = {.r = 176, .g = 39, .b = 245, .a = 255},
+        [COLOR_WHITE] = {.r = 255, .g = 255, .b = 255, .a = 255},
         [COLOR_BLACK] = {.r = 0, .g = 0, .b = 0, .a = 0},
     };
 
@@ -190,6 +191,18 @@ worldBoundry(Game *game, Ball *ball)
     }
 }
 
+void
+drawCursor(SDL_Renderer *renderer, SDL_Point p) {
+    SDL_Rect r = {
+        .x = p.x - 5,
+        .y = p.y - 5,
+        .w = 10,
+        .h = 10
+    };
+    setColor(renderer, COLOR_WHITE);
+    SDL_RenderFillRect(renderer, &r);
+}
+
 static uint8_t
 updateMain(Game *game,
            float seconds,
@@ -226,8 +239,9 @@ updateMain(Game *game,
         Ball *b = &game->balls[selected];
         b->px = mouse.p.x;
         b->py = mouse.p.y;
-        SDL_ShowCursor(false);
-    } else SDL_ShowCursor(true);
+    }  else {
+        printf("%d, %d\n", mouse.p.x, mouse.p.y);
+    }
 
 
     // TODO
@@ -262,13 +276,18 @@ updateMain(Game *game,
 
     // }
 
-    // TODO only draw balls that are colliding
+    // TODO
+    // only draw balls that are colliding
+
     // everying else should be update with backbuffer
     for (int i = 0; i < BALL_COUNT; ++i) {
         Ball *b = &game->balls[i];
         drawBall(game->renderer, *b);
     }
 
+    if (selected < 0) drawCursor(game->renderer, mouse.p);
+    // TODO
+    // put a border around selected ball
     time++;
 
     return UPDATE_MAIN;
@@ -366,7 +385,7 @@ void createBalls(Game *game) {
 
         b->py = (rand() / (float)RAND_MAX) * (float)game->screen_rect.h;
 
-        b->color = (rand() / (float)RAND_MAX) * ((float)COLOR_SIZE - 1);
+        b->color = (rand() / (float)RAND_MAX) * ((float)COLOR_SIZE - 2);
 
         b->mass = b->radius * 10;
     }
@@ -407,6 +426,8 @@ Game_Init()
         SDL_CreateRenderer(game.window, 0, SDL_RENDERER_ACCELERATED);
 
     END(game.renderer == NULL, "Could not create renderer", SDL_GetError());
+
+    SDL_SetRelativeMouseMode(true);
 
     srand(time(NULL));
     createBalls(&game);
