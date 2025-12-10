@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 
 #define METER_AS_PIXELS 3779U
-#define BALL_COUNT 40
+#define BALL_COUNT 10
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -41,8 +41,6 @@ typedef struct _Game {
     SDL_Window *window;
     const SDL_Rect screen_rect;
     Ball balls[BALL_COUNT];
-
-    bool out_of_bounds;
     uint32_t fps;
     float terminal_velocity;
     uint8_t ball_size_min;
@@ -109,7 +107,8 @@ bool pointInBall(Ball b,
 }
 
 void
-drawCircle(SDL_Renderer *ren,
+drawCircle(SDL_Renderer *renderer,
+           SDL_Rect border,
            float radius,
            int px,
            int py,
@@ -123,14 +122,27 @@ drawCircle(SDL_Renderer *ren,
     {
         x = cosf(i);
         y = sinf(i);
+        int rx = (x * radius);
+        int ry = (y * radius);
+        int tx = rx + px;
+        int ty = ry + py;
+        // wraping
+        // This works except in case where a ball is in the corner. Than the
+        // ball will apear in all four courners
+        // SDL_Rect point = {
+        //     .x = (tx > border.w) ? tx -= border.w : (tx < 0) ? tx += border.w : tx, 
+        //     .y = (ty > border.h) ? ty -= border.h : (ty < 0) ? ty += border.h : ty, 
+        //     w, 
+        //     w
+        // };
         SDL_Rect point = {
-            (x * radius) + px, 
-            (y * radius) + py,
+            .x = tx, 
+            .y = ty, 
             w, 
             w
         };
-        setColor(ren, color);
-        SDL_RenderFillRect(ren, &point);
+        setColor(renderer, color);
+        SDL_RenderFillRect(renderer, &point);
     }
 }
 
@@ -329,10 +341,15 @@ updateMain(Game *game,
             b2->py += 
                 overlap * (float)(b1->py - b2->py) / distance;
         }
+        // wrap around screen
+        if (b1->px < 0) b1->px += (float)game->screen_rect.w;
+        if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
+        if (b1->py < 0) b1->py += (float)game->screen_rect.h;
+        if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
 
         if (i == selected) drawBall(game->renderer, *b1);
-        else drawCircle(game->renderer, b1->radius, b1->px, b1->py, 2,
-             b1->color);
+        else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
+                        b1->py, 2, b1->color);
     }
 
     if (selected < 0) drawCursor(game->renderer, mouse.p);
