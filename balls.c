@@ -59,7 +59,7 @@ typedef struct _Game {
 
 typedef uint8_t (*Update_callback) (Game *game, 
                                     float seconds, 
-                                    uint64_t frame,
+                                    uint32_t milliseconds,
                                     SDL_KeyCode key,
                                     Mouse mouse,
                                     bool keydown);
@@ -166,7 +166,7 @@ bool circleRectCollide(SDL_Point circle,
 static uint8_t
 updateNothing(Game *game,
            float seconds,
-           uint64_t frame,
+           uint32_t milliseconds,
            SDL_KeyCode key,
            Mouse mouse,
            bool keydown)
@@ -199,7 +199,7 @@ worldBoundry(Game *game, Ball *ball)
 static uint8_t
 updateMain(Game *game,
            float seconds,
-           uint64_t frame,
+           uint32_t milliseconds,
            SDL_KeyCode key,
            Mouse mouse,
            bool keydown)
@@ -209,12 +209,9 @@ updateMain(Game *game,
     // draw balls and wrap them around the screen
 
     // game->ball_distinct_unordered_pairs is the total number of possible
-    // collisions, it is multiplied by two because there needs to be two values
+    // collisions, it is multiplied was two because there needed to be two values
     // for each collision, a ball at the target ball
-    // There may be a possible collision where 0 and 12 may collide but then 12
-    // and 0 may also collide... the same collision but a different order
-    //
-    Ball *colliding[game->ball_distinct_unordered_pairs * 2];
+    Ball *colliding[game->ball_distinct_unordered_pairs];
     uint8_t collision_count = 0;
 
     // NOTE:
@@ -243,10 +240,10 @@ updateMain(Game *game,
     for (int i = 0; i < BALL_COUNT; ++i) {
         Ball *b1 = &game->balls[i];
 
-        for (int j = 0; j < BALL_COUNT; ++j) {
+        for (int j = i + 1; j < BALL_COUNT; ++j) {
             Ball *b2 = &game->balls[j];
 
-            if ((j == i) || !ballCollide(*b1, *b2)) continue;
+            if (!ballCollide(*b1, *b2)) continue;
 
             colliding[collision_count++] = b1;
             colliding[collision_count++] = b2;
@@ -294,7 +291,6 @@ Game_Update(Game *game)
     uint8_t update_id = 0;
     Update_callback update;
     float mspf = (1.0f / (float)game->fps) * 1000.0f;
-    float seconds = 0;
     SDL_Event event;
     SDL_KeyCode key = 0;
     uint8_t color = COLOR_BLACK;
@@ -308,16 +304,11 @@ Game_Update(Game *game)
         if (game->out_of_bounds) color = COLOR_GREEN;
         setColor(game->renderer, color);
         SDL_RenderClear(game->renderer);
-        // TODO:
-        // find milliseconds so you can update gravity more acurately
-        // (1 / frame)
-        seconds = ((float)frame / (float)game->fps);
 
         // Place update functions here
         switch (update_id) {
             case UPDATE_MAIN: update = updateMain; break;
             case UPDATE_NOTHING: update = updateNothing; break;
-            // case UPDATE_LOSE: update = updateLose; break;
         }
 
 
@@ -354,7 +345,7 @@ Game_Update(Game *game)
             }
         }
 
-        update_id = update(game, seconds, frame, key, mouse,keydown);
+        update_id = update(game, SDL_GetTicks(), frame, key, mouse,keydown);
 
         if ((SDL_GetTicks() - ticks_start) >= mspf) {
             ticks_start = SDL_GetTicks();
