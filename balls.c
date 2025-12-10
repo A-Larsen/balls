@@ -240,6 +240,8 @@ updateMain(Game *game,
 {
     static float time = 0;
     static int selected = -1;
+    setColor(game->renderer, COLOR_BLACK);
+    SDL_RenderClear(game->renderer);
 
     // game->ball_distinct_unordered_pairs is the total number of possible
     // collisions, it is multiplied was two because there needed to be two values
@@ -337,17 +339,12 @@ Game_Update(Game *game)
     float mspf = (1.0f / (float)game->fps) * 1000.0f;
     SDL_Event event;
     SDL_KeyCode key = 0;
-    uint8_t color = COLOR_BLACK;
     uint32_t ticks_start = SDL_GetTicks();
 
     // TODO
     // add backbuffer
 
     while (!quit) {
-        // clear screen
-        if (game->out_of_bounds) color = COLOR_GREEN;
-        setColor(game->renderer, color);
-        SDL_RenderClear(game->renderer);
 
         // Place update functions here
         switch (update_id) {
