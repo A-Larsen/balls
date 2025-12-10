@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 
 #define METER_AS_PIXELS 3779U
-#define BALL_COUNT 10
+#define BALL_COUNT 40
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -255,8 +255,8 @@ drawCursor(SDL_Renderer *renderer, SDL_Point p) {
     SDL_Rect r = {
         .x = p.x - 5,
         .y = p.y - 5,
-        .w = 10,
-        .h = 10
+        .w = 15,
+        .h = 15
     };
     setColor(renderer, COLOR_WHITE);
     SDL_RenderFillRect(renderer, &r);
@@ -309,10 +309,11 @@ updateMain(Game *game,
     for (int i = 0; i < BALL_COUNT; ++i) {
         Ball *b1 = &game->balls[i];
 
-        for (int j = i + 1; j < BALL_COUNT; ++j) {
+        // for (int j = i + 1; j < BALL_COUNT; ++j) {
+        for (int j = 0; j < BALL_COUNT; ++j) {
             Ball *b2 = &game->balls[j];
 
-            if (!ballCollide(*b1, *b2)) continue;
+            if ((j == i) || !ballCollide(*b1, *b2)) continue;
 
             colliding[collision_count++] = b1;
             colliding[collision_count++] = b2;
@@ -329,19 +330,11 @@ updateMain(Game *game,
             b2->py += 
                 overlap * (float)(b1->py - b2->py) / distance;
         }
+        if (i == selected) drawBall(game->renderer, *b1);
+        else drawCircle(game->renderer, b1->radius, b1->px, b1->py, 2,
+             b1->color);
 
-        drawBall(game->renderer, *b1);
-        if (i == selected) {
-            drawCircle(game->renderer, b1->radius - 4, b1->px, b1->py, 2,
-                       COLOR_BLACK);
-            drawCircle(game->renderer, b1->radius - 2, b1->px, b1->py, 2,
-                       COLOR_WHITE);
-        }
     }
-
-    // for (int i = 0; i < collision_count; ++i) {
-
-    // }
 
     if (selected < 0) drawCursor(game->renderer, mouse.p);
     // TODO
@@ -461,7 +454,7 @@ Game_Init()
             ((float)BALL_COUNT * ((float)BALL_COUNT - 1.0f)) / 2.0f,
         .screen_rect = {.x = 0, .y = 0, .w = 800, .h = 800},
         .fps = 60,
-        .ball_size_min = 30,
+        .ball_size_min = 15,
         .ball_size_max = 50,
         .backbuffer = NULL,
     };
