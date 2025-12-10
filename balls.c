@@ -494,10 +494,14 @@ Game_Init()
 
     SDL_SetRelativeMouseMode(true);
 
+    // setColor(game->backbuffer, COLOR_BLACK);
+    // SDL_RenderClear(game->renderer);
     game.backbuffer = 
             SDL_CreateRGBSurface(0, game.screen_rect.w, game.screen_rect.h, 
                                  32, 0xFF000000, 0x00FF0000, 0x0000FF00,
                                  0x000000FF);
+    // fill backbuffer with black
+    SDL_FillRect(game.backbuffer, &game.screen_rect, 0x00000000);
 
     srand(time(NULL));
     createBalls(&game);
