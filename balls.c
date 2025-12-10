@@ -309,11 +309,10 @@ updateMain(Game *game,
     for (int i = 0; i < BALL_COUNT; ++i) {
         Ball *b1 = &game->balls[i];
 
-        // for (int j = i + 1; j < BALL_COUNT; ++j) {
-        for (int j = 0; j < BALL_COUNT; ++j) {
+        for (int j = i + 1; j < BALL_COUNT; ++j) {
             Ball *b2 = &game->balls[j];
 
-            if ((j == i) || !ballCollide(*b1, *b2)) continue;
+            if (!ballCollide(*b1, *b2)) continue;
 
             colliding[collision_count++] = b1;
             colliding[collision_count++] = b2;
@@ -330,10 +329,10 @@ updateMain(Game *game,
             b2->py += 
                 overlap * (float)(b1->py - b2->py) / distance;
         }
+
         if (i == selected) drawBall(game->renderer, *b1);
         else drawCircle(game->renderer, b1->radius, b1->px, b1->py, 2,
              b1->color);
-
     }
 
     if (selected < 0) drawCursor(game->renderer, mouse.p);
