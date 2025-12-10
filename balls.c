@@ -503,6 +503,10 @@ Game_Init()
     // fill backbuffer with black
     SDL_FillRect(game.backbuffer, &game.screen_rect, 0x00000000);
 
+    // print system information
+    printf("big ending = %s\n", SDL_BYTEORDER == SDL_BIG_ENDIAN ? 
+                                "true": "False");
+
     srand(time(NULL));
     createBalls(&game);
 
