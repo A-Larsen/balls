@@ -10,15 +10,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL.h>
 
-// NOTE:
-// This is a less accurate depiction of gravity. I am using a different number
-// as the mesurement in meters per second because you cannot have fractions of a
-// pixel. In order to depict this more accurately I would need an approximate
-// size of a pixel, and not every pixel is the same size. I have decided not to
-// be THAT accurate.
 #define METER_AS_PIXELS 3779U
 #define BALL_COUNT 10
-// #define GRAVITY 0.5f
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -44,6 +37,7 @@ typedef struct _Mouse {
 
 typedef struct _Game {
     SDL_Renderer *renderer;
+    SDL_Renderer *backbuffer;
     SDL_Window *window;
     const SDL_Rect screen_rect;
     Ball balls[BALL_COUNT];
@@ -206,7 +200,6 @@ updateMain(Game *game,
 {
     static float time = 0;
     static int selected = -1;
-    // draw balls and wrap them around the screen
 
     // game->ball_distinct_unordered_pairs is the total number of possible
     // collisions, it is multiplied was two because there needed to be two values
@@ -214,17 +207,19 @@ updateMain(Game *game,
     Ball *colliding[game->ball_distinct_unordered_pairs];
     uint8_t collision_count = 0;
 
+    // TODO
+    // use relative mouse mode for mouse movement
+
     // NOTE:
     // issues arise when mouse movement is too fast
     // don't check mouse click more than needed
     if(mouse.button == SDL_BUTTON_LEFT && (selected < 0)) {
         for (int i = 0; i < BALL_COUNT; ++i) {
             Ball *b = &game->balls[i];
-            if (pointInBall(*b, mouse.p)) {
-                selected = i; // toggle selected
-            }
+            if (pointInBall(*b, mouse.p)) selected = i;
         }
     }
+
     if (!mouse.down) selected = -1;
 
     if(selected >= 0) {
@@ -263,9 +258,9 @@ updateMain(Game *game,
 
     }
 
-    for (int i = 0; i < collision_count; ++i) {
+    // for (int i = 0; i < collision_count; ++i) {
 
-    }
+    // }
 
     // TODO only draw balls that are colliding
     // everying else should be update with backbuffer
@@ -363,29 +358,34 @@ void createBalls(Game *game) {
         b->vy = 0;
         b->ax = 0;
         b->ay = 0;
-        b->radius = ((rand() / (float)RAND_MAX) * 
-                                (game->ball_size_max - game->ball_size_min)) +
-                                game->ball_size_min;
-        b->px = (rand() / (float)RAND_MAX) *
-                (float)game->screen_rect.w;
+        b->radius =
+            ((rand() / (float)RAND_MAX) * (game->ball_size_max -
+            game->ball_size_min)) + game->ball_size_min;
 
-        b->py = (rand() / (float)RAND_MAX) *
-                      (float)game->screen_rect.h;
+        b->px = (rand() / (float)RAND_MAX) * (float)game->screen_rect.w;
 
-        b->color = (rand() / (float)RAND_MAX) *
-                               ((float)COLOR_SIZE - 1);
+        b->py = (rand() / (float)RAND_MAX) * (float)game->screen_rect.h;
+
+        b->color = (rand() / (float)RAND_MAX) * ((float)COLOR_SIZE - 1);
+
         b->mass = b->radius * 10;
     }
 
 }
 
-void
-Game_Init(Game *game)
+Game *
+Game_Init()
 // All the variable and data initialization needed for SDL and perhaps game
 // variables
 {
-    // TODO:
-    // Have Game struct defined in here and then returned
+    static Game game = {
+        .ball_distinct_unordered_pairs =
+            ((float)BALL_COUNT * ((float)BALL_COUNT - 1.0f)) / 2.0f,
+        .screen_rect = {.x = 0, .y = 0, .w = 800, .h = 800},
+        .fps = 60,
+        .ball_size_min = 30,
+        .ball_size_max = 50,
+    };
 
     END(SDL_Init(SDL_INIT_VIDEO) != 0, "Could not create texture",
         SDL_GetError());
@@ -394,24 +394,24 @@ Game_Init(Game *game)
 
 
 
-    game->window = SDL_CreateWindow("balls", SDL_WINDOWPOS_UNDEFINED, 
-                     SDL_WINDOWPOS_UNDEFINED, game->screen_rect.w, 
-                     game->screen_rect.h, SDL_WINDOW_SHOWN);
+    game.window = SDL_CreateWindow("balls", SDL_WINDOWPOS_UNDEFINED, 
+                     SDL_WINDOWPOS_UNDEFINED, game.screen_rect.w, 
+                     game.screen_rect.h, SDL_WINDOW_SHOWN);
 
-    END(game->window == NULL, "Could not create window", SDL_GetError());
+    END(game.window == NULL, "Could not create window", SDL_GetError());
 
-    game->renderer = SDL_CreateRenderer(game->window, 0,
-                                        SDL_RENDERER_ACCELERATED);
+    game.renderer =
+        SDL_CreateRenderer(game.window, 0, SDL_RENDERER_ACCELERATED);
 
-    END(game->renderer == NULL, "Could not create renderer", SDL_GetError());
-    // game->fps = -1;
-    game->fps = 60;
+    game.backbuffer =
+        SDL_CreateRenderer(game.window, 0, SDL_RENDERER_ACCELERATED);
+
+    END(game.renderer == NULL, "Could not create renderer", SDL_GetError());
+
     srand(time(NULL));
+    createBalls(&game);
 
-    // create 10 balls with a random position and radius
-    game->ball_size_min = 30;
-    game->ball_size_max = 50;
-    createBalls(game);
+    return &game;
 }
 
 void
@@ -426,14 +426,8 @@ Game_Quit(Game *game)
 int
 main(void)
 {
-    // Constansts defined here
-    Game game = {
-        .ball_distinct_unordered_pairs =
-            ((float)BALL_COUNT * ((float)BALL_COUNT - 1.0f)) / 2.0f,
-        .screen_rect = {.x = 0, .y = 0, .w = 800, .h = 800}
-    };
-    Game_Init(&game);
-    Game_Update(&game);
-    Game_Quit(&game);
+    Game *game = Game_Init();
+    Game_Update(game);
+    Game_Quit(game);
     return 0;
 }
