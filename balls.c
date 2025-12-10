@@ -240,14 +240,16 @@ updateMain(Game *game,
 {
     static float time = 0;
     static int selected = -1;
+
+    Ball *colliding[game->ball_distinct_unordered_pairs];
+    uint8_t collision_count = 0;
+
     setColor(game->renderer, COLOR_BLACK);
     SDL_RenderClear(game->renderer);
 
     // game->ball_distinct_unordered_pairs is the total number of possible
     // collisions, it is multiplied was two because there needed to be two values
     // for each collision, a ball at the target ball
-    Ball *colliding[game->ball_distinct_unordered_pairs];
-    uint8_t collision_count = 0;
 
     // TODO
     // use relative mouse mode for mouse movement
@@ -331,15 +333,16 @@ Game_Update(Game *game)
 // Each update callback determines what update callback will be called next by
 // returning the appropriate enum value
 {
+    uint8_t update_id = 0;
     uint64_t frame = 0;
     bool quit = false;
     bool keydown = false;
-    uint8_t update_id = 0;
-    Update_callback update;
     float mspf = (1.0f / (float)game->fps) * 1000.0f;
     SDL_Event event;
     SDL_KeyCode key = 0;
+    Update_callback update;
     uint32_t ticks_start = SDL_GetTicks();
+    Mouse mouse;
 
     // TODO
     // add backbuffer
@@ -352,8 +355,6 @@ Game_Update(Game *game)
             case UPDATE_NOTHING: update = updateNothing; break;
         }
 
-
-        Mouse mouse;
         while (SDL_PollEvent(&event)) {
 
             switch (event.type) {
