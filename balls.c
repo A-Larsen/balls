@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 
 #define METER_AS_PIXELS 3779U
-#define BALL_COUNT 10
+#define BALL_COUNT 30
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -282,7 +282,7 @@ updateMain(Game *game,
            Mouse mouse,
            bool keydown)
 {
-    static float time = 0;
+    static float elapsedTime = 0;
     static int selected = -1;
 
     Ball *colliding[game->ball_distinct_unordered_pairs];
@@ -307,14 +307,45 @@ updateMain(Game *game,
             if (pointInBall(*b, mouse.p)) selected = i;
         }
     }
+    if((!mouse.down) && (mouse.button == SDL_BUTTON_RIGHT) && (selected >= 0)) {
+        Ball *b = &game->balls[selected];
+        b->vx = 5.0f * (b->px - (float)mouse.p.x);
+        b->vy = 5.0f * (b->py - (float)mouse.p.y);
+    }
 
     if (!mouse.down) selected = -1;
 
-    if(selected >= 0) {
+    if(selected >= 0 && mouse.button != SDL_BUTTON_RIGHT) {
+        elapsedTime = 0;
         Ball *b = &game->balls[selected];
         b->px = mouse.p.x;
         b->py = mouse.p.y;
     }  
+
+    for (int i = 0; i < BALL_COUNT; ++i) {
+        Ball *b1 = &game->balls[i];
+        // drag
+        b1->ax = -b1->vx * 0.8f;
+        b1->ay = -b1->vy * 0.8f;
+
+        b1->vx += b1->ax * elapsedTime;
+        b1->vy += b1->ay * elapsedTime;
+        b1->px += b1->vx * elapsedTime;
+        b1->py += b1->vy * elapsedTime;
+
+        // wrap around screen
+        if (b1->px < 0) b1->px += (float)game->screen_rect.w;
+        if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
+        if (b1->py < 0) b1->py += (float)game->screen_rect.h;
+        if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
+
+        if (fabs(b1->vx * b1->vx + b1->vy * b1->vy) < 0.01f) {
+            b1->vx = 0;
+            b1->vy = 0;
+        }
+
+        
+    }
 
     // TODO
     // set up a list of values that will not conflict for i and j in gameInit
@@ -341,12 +372,6 @@ updateMain(Game *game,
             b2->py += 
                 overlap * (float)(b1->py - b2->py) / distance;
         }
-        // wrap around screen
-        if (b1->px < 0) b1->px += (float)game->screen_rect.w;
-        if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
-        if (b1->py < 0) b1->py += (float)game->screen_rect.h;
-        if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
-
         if (i == selected) drawBall(game->renderer, *b1);
         else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
                         b1->py, 2, b1->color);
@@ -355,7 +380,7 @@ updateMain(Game *game,
     if (selected < 0) drawCursor(game->renderer, mouse.p);
     // TODO
     // put a border around selected ball
-    time++;
+    elapsedTime += 0.001f;
 
     return UPDATE_MAIN;
 }
