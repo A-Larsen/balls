@@ -75,7 +75,7 @@ setColor(SDL_Renderer *renderer,
         [COLOR_BLUE] = {.r = 39, .g = 211, .b = 245, .a = 255},
         [COLOR_ORANGE] = {.r = 242, .g = 174, .b = 114, .a = 255},
         [COLOR_GREY] = {.r = 89, .g = 89, .b = 89, .a = 89},
-        [COLOR_YELLOW] = {.r = 230, .g = 230, .b = 0, .a = 255},
+        [COLOR_YELLOW] = {.r = 230, .g = 240, .b = 0, .a = 255},
         [COLOR_PINK] = {.r = 245, .g = 39, .b = 108, .a = 255},
         [COLOR_NEON_GREEN] = {.r = 39, .g = 245, .b = 176, .a = 255},
         [COLOR_PURPLE] = {.r = 176, .g = 39, .b = 245, .a = 255},
@@ -108,7 +108,34 @@ bool pointInBall(Ball b,
 }
 
 void
-drawBall(SDL_Renderer *renderer, Ball ball)
+drawCircle(SDL_Renderer *ren,
+           float radius,
+           int px,
+           int py,
+           int w,
+           uint8_t color)
+{
+    
+    float x = 0;
+    float y = 0;
+    for(float i = 0; i < 2 * M_PI; i += 0.001f)
+    {
+        x = cosf(i);
+        y = sinf(i);
+        SDL_Rect point = {
+            (x * radius) + px, 
+            (y * radius) + py,
+            w, 
+            w
+        };
+        setColor(ren, color);
+        SDL_RenderFillRect(ren, &point);
+    }
+}
+
+void
+drawBall(SDL_Renderer *renderer,
+         Ball ball)
 // (x - h)^2 + (y - k)^2 = r^2
 // Drawing a circle with the standard circle formula.
 // There may be a more performant way to do this...
@@ -239,9 +266,7 @@ updateMain(Game *game,
         Ball *b = &game->balls[selected];
         b->px = mouse.p.x;
         b->py = mouse.p.y;
-    }  else {
-        printf("%d, %d\n", mouse.p.x, mouse.p.y);
-    }
+    }  
 
 
     // TODO
@@ -283,6 +308,11 @@ updateMain(Game *game,
     for (int i = 0; i < BALL_COUNT; ++i) {
         Ball *b = &game->balls[i];
         drawBall(game->renderer, *b);
+        if (i == selected) {
+            // SDL_Point center = {.x = b->px, .y}
+            drawCircle(game->renderer, b->radius - 4, b->px, b->py, 2, COLOR_BLACK);
+            drawCircle(game->renderer, b->radius - 2, b->px, b->py, 2, COLOR_WHITE);
+        }
     }
 
     if (selected < 0) drawCursor(game->renderer, mouse.p);
