@@ -1,8 +1,6 @@
 == Balls
 This repository has physics examples using balls. Each branch has a different
-example. Checkout
-https://raw.githack.com/A-Larsen/balls/refs/heads/main/docs/formulas.html[formulas]
-for the formulas used in each branch.
+example, with a link to the formulas used.
 
 == TODO
 - [x] Bouncing
