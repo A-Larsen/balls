@@ -337,10 +337,11 @@ updateMain(Game *game,
         b1->py += b1->vy * elapsedTime;
 
         // wrap around screen
-        if (b1->px < 0) b1->px += (float)game->screen_rect.w;
-        if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
-        if (b1->py < 0) b1->py += (float)game->screen_rect.h;
-        if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
+        // Looks really bad, I'm removing this
+        // if (b1->px < 0) b1->px += (float)game->screen_rect.w;
+        // if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
+        // if (b1->py < 0) b1->py += (float)game->screen_rect.h;
+        // if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
 
         if (fabs(b1->vx * b1->vx + b1->vy * b1->vy) < 0.01f) {
             b1->vx = 0;
@@ -373,7 +374,8 @@ updateMain(Game *game,
             Ball *b2 = &game->balls[j];
 
             if (!ballCollide(*b1, *b2)) continue;
-                game->balls_colliding = calloc(sizeof(Ball *), (game->collision_count + 2));
+                game->balls_colliding = calloc(sizeof(Ball *),
+                                        (game->collision_count + 2));
                 END((!game->balls_colliding), "calloc()", "could not allocate game->balls_colliding()" );
                 game->balls_colliding[game->collision_count++] = b1;
                 game->balls_colliding[game->collision_count++] = b2;
@@ -384,14 +386,10 @@ updateMain(Game *game,
 
                 if (distance == 0) continue;
 
-                b1->px -= 
-                    overlap * (float)(b1->px - b2->px) / distance;
-                b1->py -= 
-                    overlap * (float)(b1->py - b2->py) / distance;
-                b2->px += 
-                    overlap * ((float)b1->px - b2->px) / distance;
-                b2->py += 
-                    overlap * (float)(b1->py - b2->py) / distance;
+                b1->px -= overlap * (float)(b1->px - b2->px) / distance;
+                b1->py -= overlap * (float)(b1->py - b2->py) / distance;
+                b2->px += overlap * ((float)b1->px - b2->px) / distance;
+                b2->py += overlap * (float)(b1->py - b2->py) / distance;
             // }
         }
     }
@@ -534,9 +532,8 @@ void createBalls(Game *game) {
         b->vy = 0;
         b->ax = 0;
         b->ay = 0;
-        b->radius =
-            ((rand() / (float)RAND_MAX) * (game->ball_size_max -
-            game->ball_size_min)) + game->ball_size_min;
+        b->radius = ((rand() / (float)RAND_MAX) * (game->ball_size_max -
+                    game->ball_size_min)) + game->ball_size_min;
 
         b->px = (rand() / (float)RAND_MAX) * (float)game->screen_rect.w;
 
@@ -545,7 +542,6 @@ void createBalls(Game *game) {
         b->color = (rand() / (float)RAND_MAX) * ((float)COLOR_SIZE - 2);
 
         b->mass = b->radius * 10;
-        // drawBall2(game->backbuffer, *b);
     }
 
 }
