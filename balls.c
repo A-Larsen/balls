@@ -89,8 +89,7 @@ setColor(SDL_Renderer *renderer,
 }
 
 float getHyp(float x1, float y1, float x2, float y2) {
-    return sqrtf((float)(x1 - x2) * (float)(x1 - x2) +
-           (float)(y1 - y2) * (float)(y1 - y2));
+    return sqrtf((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 bool ballCollide(Ball b1,
@@ -384,9 +383,9 @@ updateMain(Game *game,
             // all collisions must be resolved
             // TODO
             // fix issue that freezes program from this loop
-            uint8_t loop_guard = 0;
-            while(ballCollide(*b1, *b2) && loop_guard++ < 4) {
+            while(ballCollide(*b1, *b2)) {
                 printf("resoliving\n");
+                if (distance == 0) break;
                 b1->px -= 
                     overlap * (float)(b1->px - b2->px) / distance;
                 b1->py -= 
