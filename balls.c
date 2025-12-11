@@ -377,6 +377,26 @@ updateMain(Game *game,
         else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
                         b1->py, 2, b1->color);
     }
+    for (int i = 0; i < collision_count; ++i) {
+        Ball *b1 = &colliding[i];
+        Ball *b2 = &colliding[i + 1];
+        float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
+
+        float nx = (b2->px - b1->px) / distance;
+        float ny = (b2->py - b1->py) / distance;
+
+        float tx = -ny;
+        float ty = nx;
+
+        float dpTan1 = b1->vx * tx + b1->vy * ty;
+        float dpTan2 = b2->vx * tx + b2->vy * ty;
+
+        float dpNorm1 = b1->vx * nx + b1->vy * ny;
+        float dpNorm2 = b2->vx * nx + b2->vy * ny;
+
+        // float m1 = (dpNorm1)
+        
+    }
 
     if((mouse.down) && (mouse.button == SDL_BUTTON_RIGHT) && (selected >= 0)) {
         Ball *b = &game->balls[selected];
