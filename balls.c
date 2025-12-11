@@ -382,7 +382,10 @@ updateMain(Game *game,
                                 (float)b2->radius);
 
             // all collisions must be resolved
+            // TODO
+            // fix issue that freezes program from this loop
             while(ballCollide(*b1, *b2)) {
+                printf("resoliving\n");
                 b1->px -= 
                     overlap * (float)(b1->px - b2->px) / distance;
                 b1->py -= 
