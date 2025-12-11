@@ -7,4 +7,4 @@ for the formulas used in each branch.
 == TODO
 - [x] Bouncing
 - [x] Collisions
-- [ ] 2D prodjectile Motion
+- [ ] 2D projectile Motion
