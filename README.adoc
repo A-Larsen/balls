@@ -10,6 +10,6 @@ ball will show you an example of elastic collision.
 | control                             | action
 | right-click                         | select ball
 | right-click and left-click and drag | flings ball on release, the distance
-                                        away from the ball determine the amount
+                                        away from the ball determines the amount
                                         of velocity to launch the ball at
 |===
