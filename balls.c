@@ -384,7 +384,8 @@ updateMain(Game *game,
             // all collisions must be resolved
             // TODO
             // fix issue that freezes program from this loop
-            while(ballCollide(*b1, *b2)) {
+            uint8_t loop_guard = 0;
+            while(ballCollide(*b1, *b2) && loop_guard++ < 4) {
                 printf("resoliving\n");
                 b1->px -= 
                     overlap * (float)(b1->px - b2->px) / distance;
