@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 
 #define METER_AS_PIXELS 3779U
-#define BALL_COUNT 50
+#define BALL_COUNT 30
 
 // (BALL_COUNT * (BALL_COUNT - 1)) / 2
 // #define BALL_DISTINCT_UNORDERED_PAIRS 435
@@ -393,7 +393,7 @@ updateMain(Game *game,
             // }
         }
     }
-    printf("collision count: %d\n", collision_count);
+    // printf("collision count: %d\n", collision_count);
     for (int i = 0; i < collision_count; ++i) {
         Ball *b1 = colliding[i];
         Ball *b2 = colliding[i + 1];
