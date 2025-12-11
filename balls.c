@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 
 #define METER_AS_PIXELS 3779U
-#define BALL_COUNT 30
+#define BALL_COUNT 50
 
 // (BALL_COUNT * (BALL_COUNT - 1)) / 2
 // #define BALL_DISTINCT_UNORDERED_PAIRS 435
@@ -375,18 +375,13 @@ updateMain(Game *game,
                 END((!colliding), "calloc()", "could not allocate colliding()" );
                 colliding[collision_count++] = b1;
                 colliding[collision_count++] = b2;
-                float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
+                float distance = fabs(getHyp(b1->px, b1->py, b2->px, b2->py));
 
-                float overlap = 0.5f * (distance - (float)b1->radius -
+                float overlap = (distance - (float)b1->radius -
                                 (float)b2->radius);
 
-            // all collisions must be resolved
-            // TODO
-            // fix issue that freezes program from this loop
-            uint16_t loop_gaurd = 0;
-            while(ballCollide(*b1, *b2) && loop_gaurd++ < 500) {
-                printf("resoliving\n");
-                if (distance == 0) break;
+                if (distance == 0) continue;
+
                 b1->px -= 
                     overlap * (float)(b1->px - b2->px) / distance;
                 b1->py -= 
@@ -395,7 +390,7 @@ updateMain(Game *game,
                     overlap * ((float)b1->px - b2->px) / distance;
                 b2->py += 
                     overlap * (float)(b1->py - b2->py) / distance;
-            }
+            // }
         }
     }
     printf("collision count: %d\n", collision_count);
