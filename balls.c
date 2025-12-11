@@ -48,6 +48,8 @@ typedef struct _Game {
     float terminal_velocity;
     uint8_t ball_size_min;
     uint8_t ball_size_max;
+    Ball **balls_colliding;
+    uint8_t collision_count;
 } Game;
 
 
@@ -287,8 +289,8 @@ updateMain(Game *game,
     static int selected = -1;
 
     // Ball *colliding[BALL_DISTINCT_UNORDERED_PAIRS] = {0};
-    Ball **colliding  = NULL;
-    uint8_t collision_count = 0;
+    game->balls_colliding  = NULL;
+    game->collision_count = 0;
 
 
     // game->ball_distinct_unordered_pairs is the total number of possible
@@ -371,10 +373,10 @@ updateMain(Game *game,
             Ball *b2 = &game->balls[j];
 
             if (!ballCollide(*b1, *b2)) continue;
-                colliding = calloc(sizeof(Ball *), (collision_count + 2));
-                END((!colliding), "calloc()", "could not allocate colliding()" );
-                colliding[collision_count++] = b1;
-                colliding[collision_count++] = b2;
+                game->balls_colliding = calloc(sizeof(Ball *), (game->collision_count + 2));
+                END((!game->balls_colliding), "calloc()", "could not allocate game->balls_colliding()" );
+                game->balls_colliding[game->collision_count++] = b1;
+                game->balls_colliding[game->collision_count++] = b2;
                 float distance = fabs(getHyp(b1->px, b1->py, b2->px, b2->py));
 
                 float overlap = (distance - (float)b1->radius -
@@ -393,10 +395,10 @@ updateMain(Game *game,
             // }
         }
     }
-    // printf("collision count: %d\n", collision_count);
-    for (int i = 0; i < collision_count; ++i) {
-        Ball *b1 = colliding[i];
-        Ball *b2 = colliding[i + 1];
+    // printf("collision count: %d\n", game->collision_count);
+    for (int i = 0; i < game->collision_count; ++i) {
+        Ball *b1 = game->balls_colliding[i];
+        Ball *b2 = game->balls_colliding[i + 1];
         if (!b1 || !b2) continue;
         float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
 
@@ -436,9 +438,11 @@ updateMain(Game *game,
     }
     if (selected < 0) drawCursor(game->renderer, mouse.p);
 
-    if (collision_count > 0)  {
-        free(colliding);
-        colliding = NULL;
+    if (game->collision_count > 0)  {
+        // I do not have free each individual ball in ball colliding because
+        // they are all on the stack
+        free(game->balls_colliding);
+        game->balls_colliding = NULL;
     }
 
     elapsedTime += 0.0008f;
@@ -601,6 +605,10 @@ Game_Init()
 void
 Game_Quit(Game *game)
 {
+    if (game->collision_count > 0)  {
+        free(game->balls_colliding);
+        game->balls_colliding = NULL;
+    }
     SDL_DestroyWindow(game->window);
     SDL_DestroyRenderer(game->renderer);
     SDL_FreeSurface(game->backbuffer);
