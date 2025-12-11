@@ -14,7 +14,7 @@
 #define BALL_COUNT 30
 
 // (BALL_COUNT * (BALL_COUNT - 1)) / 2
-#define BALL_DISTINCT_UNORDERED_PAIRS 435
+// #define BALL_DISTINCT_UNORDERED_PAIRS 435
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -287,7 +287,8 @@ updateMain(Game *game,
     static float elapsedTime = 0;
     static int selected = -1;
 
-    Ball *colliding[BALL_DISTINCT_UNORDERED_PAIRS] = {0};
+    // Ball *colliding[BALL_DISTINCT_UNORDERED_PAIRS] = {0};
+    Ball **colliding  = NULL;
     uint8_t collision_count = 0;
 
 
@@ -345,6 +346,16 @@ updateMain(Game *game,
             b1->vy = 0;
         }
 
+    }
+
+    setColor(game->renderer, COLOR_BLACK);
+    SDL_RenderClear(game->renderer);
+
+    for (int i = 0; i < BALL_COUNT; ++i) {
+        Ball *b1 = &game->balls[i];
+        if (i == selected) drawBall(game->renderer, *b1);
+        else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
+                        b1->py, 2, b1->color);
         
     }
 
@@ -358,6 +369,8 @@ updateMain(Game *game,
 
             if (!ballCollide(*b1, *b2)) continue;
 
+            colliding = calloc(sizeof(Ball *), (collision_count + 2 ));
+            END((!colliding), "calloc()", "could not allocate colliding()" );
             colliding[collision_count++] = b1;
             colliding[collision_count++] = b2;
             float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
@@ -410,17 +423,6 @@ updateMain(Game *game,
         
     }
 
-    setColor(game->renderer, COLOR_BLACK);
-    SDL_RenderClear(game->renderer);
-
-    for (int i = 0; i < BALL_COUNT; ++i) {
-        Ball *b1 = &game->balls[i];
-        if (i == selected) drawBall(game->renderer, *b1);
-        else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
-                        b1->py, 2, b1->color);
-        
-    }
-
     if((mouse.down) && (mouse.button == SDL_BUTTON_RIGHT) && (selected >= 0)) {
         Ball *b = &game->balls[selected];
         setColor(game->renderer, COLOR_WHITE);
@@ -430,6 +432,10 @@ updateMain(Game *game,
     // TODO
     // put a border around selected ball
     elapsedTime += 0.0008f;
+    if (collision_count > 0)  {
+        free(colliding);
+        colliding = NULL;
+    }
 
     return UPDATE_MAIN;
 }
