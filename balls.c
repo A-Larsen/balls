@@ -12,6 +12,11 @@
 
 #define METER_AS_PIXELS 3779U
 #define BALL_COUNT 30
+// #define BALL_DISTINCT_UNORDERED_PAIRS \
+//     (((float)BALL_COUNT * ((float)BALL_COUNT - 1.0f)) / 2.0f)
+
+// (BALL_COUNT * (BALL_COUNT - 1)) / 2
+#define BALL_DISTINCT_UNORDERED_PAIRS 435
 
 #define END(check, str1, str2) \
     if (check) { \
@@ -45,7 +50,6 @@ typedef struct _Game {
     float terminal_velocity;
     uint8_t ball_size_min;
     uint8_t ball_size_max;
-    const uint16_t ball_distinct_unordered_pairs;
 } Game;
 
 
@@ -285,11 +289,9 @@ updateMain(Game *game,
     static float elapsedTime = 0;
     static int selected = -1;
 
-    Ball *colliding[game->ball_distinct_unordered_pairs];
+    Ball *colliding[BALL_DISTINCT_UNORDERED_PAIRS] = {0};
     uint8_t collision_count = 0;
 
-    setColor(game->renderer, COLOR_BLACK);
-    SDL_RenderClear(game->renderer);
 
     // game->ball_distinct_unordered_pairs is the total number of possible
     // collisions, it is multiplied was two because there needed to be two values
@@ -335,10 +337,10 @@ updateMain(Game *game,
         b1->py += b1->vy * elapsedTime;
 
         // wrap around screen
-        if (b1->px < 0) b1->px += (float)game->screen_rect.w;
-        if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
-        if (b1->py < 0) b1->py += (float)game->screen_rect.h;
-        if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
+        // if (b1->px < 0) b1->px += (float)game->screen_rect.w;
+        // if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
+        // if (b1->py < 0) b1->py += (float)game->screen_rect.h;
+        // if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
 
         if (fabs(b1->vx * b1->vx + b1->vy * b1->vy) < 0.01f) {
             b1->vx = 0;
@@ -373,18 +375,19 @@ updateMain(Game *game,
             b2->py += 
                 overlap * (float)(b1->py - b2->py) / distance;
         }
-        if (i == selected) drawBall(game->renderer, *b1);
-        else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
-                        b1->py, 2, b1->color);
     }
+    printf("%d\n", collision_count);
     for (int i = 0; i < collision_count; ++i) {
-        Ball *b1 = &colliding[i];
-        Ball *b2 = &colliding[i + 1];
+        Ball *b1 = colliding[i];
+        Ball *b2 = colliding[i + 1];
+        if (!(b1 && b2)) continue;
         float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
 
+        // normal
         float nx = (b2->px - b1->px) / distance;
         float ny = (b2->py - b1->py) / distance;
 
+        // tangent
         float tx = -ny;
         float ty = nx;
 
@@ -394,7 +397,29 @@ updateMain(Game *game,
         float dpNorm1 = b1->vx * nx + b1->vy * ny;
         float dpNorm2 = b2->vx * nx + b2->vy * ny;
 
-        // float m1 = (dpNorm1)
+        float m1 =
+            (dpNorm1 * (b1->mass - b2->mass) + 2.0f * b2->mass * dpNorm2)
+            / (b1->mass + b2->mass);
+
+        float m2 =
+            (dpNorm2 * (b2->mass - b1->mass) + 2.0f * b1->mass * dpNorm1)
+            / (b1->mass + b2->mass);
+
+        b1->vx = tx * dpTan1 + nx * m1;
+        b1->vy = ty * dpTan1 + ny * m1;
+        b2->vx = tx * dpTan2 + nx * m2;
+        b2->vy = ty * dpTan2 + ny * m2;
+        
+    }
+
+    setColor(game->renderer, COLOR_BLACK);
+    SDL_RenderClear(game->renderer);
+
+    for (int i = 0; i < BALL_COUNT; ++i) {
+        Ball *b1 = &game->balls[i];
+        if (i == selected) drawBall(game->renderer, *b1);
+        else drawCircle(game->renderer, game->screen_rect, b1->radius, b1->px,
+                        b1->py, 2, b1->color);
         
     }
 
@@ -406,7 +431,7 @@ updateMain(Game *game,
     if (selected < 0) drawCursor(game->renderer, mouse.p);
     // TODO
     // put a border around selected ball
-    elapsedTime += 0.001f;
+    elapsedTime += 0.0008f;
 
     return UPDATE_MAIN;
 }
@@ -517,8 +542,6 @@ Game_Init()
 // variables
 {
     static Game game = {
-        .ball_distinct_unordered_pairs =
-            ((float)BALL_COUNT * ((float)BALL_COUNT - 1.0f)) / 2.0f,
         .screen_rect = {.x = 0, .y = 0, .w = 800, .h = 800},
         .fps = 60,
         .ball_size_min = 15,
