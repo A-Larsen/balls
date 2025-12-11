@@ -51,6 +51,9 @@ Typical values for restitution:
 * 1D Conservation of Momentum
     - stem:[m_1 v_1 + m_2 v_2 = m_1 v_1 + m_2 v_2]
 
+* 1D Elastic Collision
+    - stem:[v_1' = (v_1\cdot (m_1-m_2 + 2 * m_2 * v_2)) / (m_1 + m_2)]
+
 * Finding magnitude in a specific direction
     - stem:[|\overrightarrow{v}| = \overrightarrow{n} \cdot \overrightarrow{v}]
 
