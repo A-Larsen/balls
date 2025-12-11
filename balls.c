@@ -361,6 +361,10 @@ updateMain(Game *game,
 
     // TODO
     // set up a list of values that will not conflict for i and j in gameInit
+
+    // TODO
+    // there is an error were the collision_count varaible will not reset to
+    // zero
     for (int i = 0; i < BALL_COUNT; ++i) {
         Ball *b1 = &game->balls[i];
 
@@ -387,7 +391,7 @@ updateMain(Game *game,
                 overlap * (float)(b1->py - b2->py) / distance;
         }
     }
-    printf("%d\n", collision_count);
+    printf("collision count: %d\n", collision_count);
     for (int i = 0; i < collision_count; ++i) {
         Ball *b1 = colliding[i];
         Ball *b2 = colliding[i + 1];
