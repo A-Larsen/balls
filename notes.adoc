@@ -1,3 +1,4 @@
 == Links
 * https://www.studyplan.dev/sdl2/sdl2-relative-mode[sdl2-relative-mouse-mode]
 * https://www.youtube.com/watch?v=XJnIdRXUi7A&t=315s[permutations and combinations]
+* https://www.youtube.com/watch?v=CFbo_nBdBco[OCT | Elastic Collisions]
