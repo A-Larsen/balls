@@ -1,4 +1,4 @@
-== Ball Bouncing
+= Ball Bouncing
 check out this link https://raw.githack.com/A-Larsen/balls/refs/heads/bounce/docs/formulas.html[formulas].
 for the formulas used.
 
