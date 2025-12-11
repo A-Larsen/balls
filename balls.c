@@ -298,7 +298,8 @@ updateMain(Game *game,
     // for each collision, a ball at the target ball
 
     // TODO
-    // use relative mouse mode for mouse movement
+    // Add a middle click feature that lets you look around. Then you could see
+    // balls that went off screen
 
     // NOTE:
     // issues arise when mouse movement is too fast
