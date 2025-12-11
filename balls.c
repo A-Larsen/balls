@@ -369,7 +369,7 @@ updateMain(Game *game,
 
             if (!ballCollide(*b1, *b2)) continue;
 
-            colliding = calloc(sizeof(Ball *), (collision_count + 2 ));
+            colliding = calloc(sizeof(Ball *), (collision_count + 2));
             END((!colliding), "calloc()", "could not allocate colliding()" );
             colliding[collision_count++] = b1;
             colliding[collision_count++] = b2;
