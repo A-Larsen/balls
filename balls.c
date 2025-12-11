@@ -384,7 +384,7 @@ updateMain(Game *game,
             // TODO
             // fix issue that freezes program from this loop
             uint16_t loop_gaurd = 0;
-            while(ballCollide(*b1, *b2) && loop_gaurd++ < 20) {
+            while(ballCollide(*b1, *b2) && loop_gaurd++ < 500) {
                 printf("resoliving\n");
                 if (distance == 0) break;
                 b1->px -= 
