@@ -98,7 +98,7 @@ bool ballCollide(Ball b1,
 {
     return fabs((b1.px - b2.px) * (b1.px - b2.px) +
            (b1.py - b2.py) * (b1.py - b2.py)) <=
-           (float)(b1.radius + b2.radius) * (float)(b1.radius + b2.radius);
+           (b1.radius + b2.radius) * (b1.radius + b2.radius);
 }
 
 bool pointInBall(Ball b,
@@ -372,30 +372,33 @@ updateMain(Game *game,
             Ball *b2 = &game->balls[j];
 
             if (!ballCollide(*b1, *b2)) continue;
+                colliding = calloc(sizeof(Ball *), (collision_count + 2));
+                END((!colliding), "calloc()", "could not allocate colliding()" );
+                colliding[collision_count++] = b1;
+                colliding[collision_count++] = b2;
+                float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
 
-            colliding = calloc(sizeof(Ball *), (collision_count + 2));
-            END((!colliding), "calloc()", "could not allocate colliding()" );
-            colliding[collision_count++] = b1;
-            colliding[collision_count++] = b2;
-            float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
+                float overlap = 0.5f * (distance - (float)b1->radius -
+                                (float)b2->radius);
 
-            float overlap = 0.5f * (distance - (float)b1->radius -
-                            (float)b2->radius);
-            b1->px -= 
-                overlap * (float)(b1->px - b2->px) / distance;
-            b1->py -= 
-                overlap * (float)(b1->py - b2->py) / distance;
-            b2->px += 
-                overlap * ((float)b1->px - b2->px) / distance;
-            b2->py += 
-                overlap * (float)(b1->py - b2->py) / distance;
+            // all collisions must be resolved
+            while(ballCollide(*b1, *b2)) {
+                b1->px -= 
+                    overlap * (float)(b1->px - b2->px) / distance;
+                b1->py -= 
+                    overlap * (float)(b1->py - b2->py) / distance;
+                b2->px += 
+                    overlap * ((float)b1->px - b2->px) / distance;
+                b2->py += 
+                    overlap * (float)(b1->py - b2->py) / distance;
+            }
         }
     }
     printf("collision count: %d\n", collision_count);
     for (int i = 0; i < collision_count; ++i) {
         Ball *b1 = colliding[i];
         Ball *b2 = colliding[i + 1];
-        if (!(b1 && b2)) continue;
+        if (!b1 || !b2) continue;
         float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
 
         // normal
@@ -433,13 +436,13 @@ updateMain(Game *game,
         SDL_RenderDrawLine(game->renderer, b->px, b->py, mouse.p.x, mouse.p.y);
     }
     if (selected < 0) drawCursor(game->renderer, mouse.p);
-    // TODO
-    // put a border around selected ball
-    elapsedTime += 0.0008f;
+
     if (collision_count > 0)  {
         free(colliding);
         colliding = NULL;
     }
+
+    elapsedTime += 0.0008f;
 
     return UPDATE_MAIN;
 }
