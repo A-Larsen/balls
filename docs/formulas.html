@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.20">
-<title>Branch Physics Formulas</title>
+<title>Formulas</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -432,92 +432,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 #footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
 @media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
 </style>
-<style>
-pre.pygments .hll { background-color: #49483e }
-pre.pygments { background: #272822; color: #F8F8F2 }
-pre.pygments .tok-c { color: #959077 } /* Comment */
-pre.pygments .tok-err { color: #ED007E; background-color: #1E0010 } /* Error */
-pre.pygments .tok-esc { color: #F8F8F2 } /* Escape */
-pre.pygments .tok-g { color: #F8F8F2 } /* Generic */
-pre.pygments .tok-k { color: #66D9EF } /* Keyword */
-pre.pygments .tok-l { color: #AE81FF } /* Literal */
-pre.pygments .tok-n { color: #F8F8F2 } /* Name */
-pre.pygments .tok-o { color: #FF4689 } /* Operator */
-pre.pygments .tok-x { color: #F8F8F2 } /* Other */
-pre.pygments .tok-p { color: #F8F8F2 } /* Punctuation */
-pre.pygments .tok-ch { color: #959077 } /* Comment.Hashbang */
-pre.pygments .tok-cm { color: #959077 } /* Comment.Multiline */
-pre.pygments .tok-cp { color: #959077 } /* Comment.Preproc */
-pre.pygments .tok-cpf { color: #959077 } /* Comment.PreprocFile */
-pre.pygments .tok-c1 { color: #959077 } /* Comment.Single */
-pre.pygments .tok-cs { color: #959077 } /* Comment.Special */
-pre.pygments .tok-gd { color: #FF4689 } /* Generic.Deleted */
-pre.pygments .tok-ge { color: #F8F8F2; font-style: italic } /* Generic.Emph */
-pre.pygments .tok-ges { color: #F8F8F2; font-weight: bold; font-style: italic } /* Generic.EmphStrong */
-pre.pygments .tok-gr { color: #F8F8F2 } /* Generic.Error */
-pre.pygments .tok-gh { color: #F8F8F2 } /* Generic.Heading */
-pre.pygments .tok-gi { color: #A6E22E } /* Generic.Inserted */
-pre.pygments .tok-go { color: #66D9EF } /* Generic.Output */
-pre.pygments .tok-gp { color: #FF4689; font-weight: bold } /* Generic.Prompt */
-pre.pygments .tok-gs { color: #F8F8F2; font-weight: bold } /* Generic.Strong */
-pre.pygments .tok-gu { color: #959077 } /* Generic.Subheading */
-pre.pygments .tok-gt { color: #F8F8F2 } /* Generic.Traceback */
-pre.pygments .tok-kc { color: #66D9EF } /* Keyword.Constant */
-pre.pygments .tok-kd { color: #66D9EF } /* Keyword.Declaration */
-pre.pygments .tok-kn { color: #FF4689 } /* Keyword.Namespace */
-pre.pygments .tok-kp { color: #66D9EF } /* Keyword.Pseudo */
-pre.pygments .tok-kr { color: #66D9EF } /* Keyword.Reserved */
-pre.pygments .tok-kt { color: #66D9EF } /* Keyword.Type */
-pre.pygments .tok-ld { color: #E6DB74 } /* Literal.Date */
-pre.pygments .tok-m { color: #AE81FF } /* Literal.Number */
-pre.pygments .tok-s { color: #E6DB74 } /* Literal.String */
-pre.pygments .tok-na { color: #A6E22E } /* Name.Attribute */
-pre.pygments .tok-nb { color: #F8F8F2 } /* Name.Builtin */
-pre.pygments .tok-nc { color: #A6E22E } /* Name.Class */
-pre.pygments .tok-no { color: #66D9EF } /* Name.Constant */
-pre.pygments .tok-nd { color: #A6E22E } /* Name.Decorator */
-pre.pygments .tok-ni { color: #F8F8F2 } /* Name.Entity */
-pre.pygments .tok-ne { color: #A6E22E } /* Name.Exception */
-pre.pygments .tok-nf { color: #A6E22E } /* Name.Function */
-pre.pygments .tok-nl { color: #F8F8F2 } /* Name.Label */
-pre.pygments .tok-nn { color: #F8F8F2 } /* Name.Namespace */
-pre.pygments .tok-nx { color: #A6E22E } /* Name.Other */
-pre.pygments .tok-py { color: #F8F8F2 } /* Name.Property */
-pre.pygments .tok-nt { color: #FF4689 } /* Name.Tag */
-pre.pygments .tok-nv { color: #F8F8F2 } /* Name.Variable */
-pre.pygments .tok-ow { color: #FF4689 } /* Operator.Word */
-pre.pygments .tok-pm { color: #F8F8F2 } /* Punctuation.Marker */
-pre.pygments .tok-w { color: #F8F8F2 } /* Text.Whitespace */
-pre.pygments .tok-mb { color: #AE81FF } /* Literal.Number.Bin */
-pre.pygments .tok-mf { color: #AE81FF } /* Literal.Number.Float */
-pre.pygments .tok-mh { color: #AE81FF } /* Literal.Number.Hex */
-pre.pygments .tok-mi { color: #AE81FF } /* Literal.Number.Integer */
-pre.pygments .tok-mo { color: #AE81FF } /* Literal.Number.Oct */
-pre.pygments .tok-sa { color: #E6DB74 } /* Literal.String.Affix */
-pre.pygments .tok-sb { color: #E6DB74 } /* Literal.String.Backtick */
-pre.pygments .tok-sc { color: #E6DB74 } /* Literal.String.Char */
-pre.pygments .tok-dl { color: #E6DB74 } /* Literal.String.Delimiter */
-pre.pygments .tok-sd { color: #E6DB74 } /* Literal.String.Doc */
-pre.pygments .tok-s2 { color: #E6DB74 } /* Literal.String.Double */
-pre.pygments .tok-se { color: #AE81FF } /* Literal.String.Escape */
-pre.pygments .tok-sh { color: #E6DB74 } /* Literal.String.Heredoc */
-pre.pygments .tok-si { color: #E6DB74 } /* Literal.String.Interpol */
-pre.pygments .tok-sx { color: #E6DB74 } /* Literal.String.Other */
-pre.pygments .tok-sr { color: #E6DB74 } /* Literal.String.Regex */
-pre.pygments .tok-s1 { color: #E6DB74 } /* Literal.String.Single */
-pre.pygments .tok-ss { color: #E6DB74 } /* Literal.String.Symbol */
-pre.pygments .tok-bp { color: #F8F8F2 } /* Name.Builtin.Pseudo */
-pre.pygments .tok-fm { color: #A6E22E } /* Name.Function.Magic */
-pre.pygments .tok-vc { color: #F8F8F2 } /* Name.Variable.Class */
-pre.pygments .tok-vg { color: #F8F8F2 } /* Name.Variable.Global */
-pre.pygments .tok-vi { color: #F8F8F2 } /* Name.Variable.Instance */
-pre.pygments .tok-vm { color: #F8F8F2 } /* Name.Variable.Magic */
-pre.pygments .tok-il { color: #AE81FF } /* Literal.Number.Integer.Long */
-</style>
 </head>
 <body class="article">
 <div id="header">
-<h1>Branch Physics Formulas</h1>
+<h1>Formulas</h1>
 </div>
 <div id="content">
 <div class="sect1">
@@ -617,169 +535,10 @@ the coefficent of restitution (e) represents energy loss.
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_collisions">collisions</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Circle Overplaping</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(|c_1 c_2| &lt;= r_1 + r_2\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Pythagrean Thereom to find distancce between balls centers</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(a^2 + b^2 = c^2\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Vector Normalization</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(\hat{u} = \frac{\overrightarrow{v}}{|\overrightarrow{v}|}\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Magnitude of a Vector</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(||\overrightarrow{a}|| = \sqrt{a_{1}^2 + a_{2}^2 + \dots a_{n}^2}\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Finding tangent vector</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(x = -y, y = x\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>1D Conservation of Momentum</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(m_1 v_1 + m_2 v_2 = m_1 v_1 + m_2 v_2\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>1D Elastic Collision</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(v_1' = (v_1 * (m_1-m_2) + 2 * m_2 * v_2)) / (m_1 + m_2)\)</p>
-</li>
-<li>
-<p>\(v_2' = (v_2 * (m_2-m_1) + 2 * m_1 * v_1)) / (m_1 + m_2)\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Finding magnitude in a specific direction</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\(|\overrightarrow{v}| = \overrightarrow{n} \cdot \overrightarrow{v}\)</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>Distinct unordered pairs</p>
-<div class="ulist">
-<ul>
-<li>
-<p>\((n,2) = \frac{n(n-1)}{2}\)</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_looking_at_the_code">Looking at the Code</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_seeing_if_circle_collide">Seeing if circle collide</h3>
-<div class="paragraph">
-<p>Instead of doing this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="c"><span></span><span class="tok-n">sqrtf</span><span class="tok-p">((</span><span class="tok-n">x1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">x2</span><span class="tok-p">)</span><span class="tok-o">*</span><span class="tok-p">(</span><span class="tok-n">x1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">x2</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-o">+</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-n">y1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">y2</span><span class="tok-p">)</span><span class="tok-o">*</span><span class="tok-p">(</span><span class="tok-n">y1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">y2</span><span class="tok-p">))</span><span class="tok-w"> </span><span class="tok-o">&lt;=</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-n">r1</span><span class="tok-w"> </span><span class="tok-o">+</span><span class="tok-w"> </span><span class="tok-n">r2</span><span class="tok-p">);</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>We can save some computing speed by removing the square root and just
-multiplying the left side by itself:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="c"><span></span><span class="tok-n">fabs</span><span class="tok-p">((</span><span class="tok-n">x1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">x2</span><span class="tok-p">)</span><span class="tok-o">*</span><span class="tok-p">(</span><span class="tok-n">x1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">x2</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-o">+</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-n">y1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">y2</span><span class="tok-p">)</span><span class="tok-o">*</span><span class="tok-p">(</span><span class="tok-n">y1</span><span class="tok-w"> </span><span class="tok-o">-</span><span class="tok-w"> </span><span class="tok-n">y2</span><span class="tok-p">))</span><span class="tok-w"> </span><span class="tok-o">&lt;=</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-n">r1</span><span class="tok-w"> </span><span class="tok-o">+</span><span class="tok-w"> </span><span class="tok-n">r2</span><span class="tok-p">)</span><span class="tok-o">*</span><span class="tok-p">(</span><span class="tok-n">r1</span><span class="tok-w"> </span><span class="tok-o">+</span><span class="tok-w"> </span><span class="tok-n">r2</span><span class="tok-p">);</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_clamping_velocity">Clamping Velocity</h3>
-<div class="paragraph">
-<p>We can use the dot product to find the velocity in specific direction and then
-clamp it</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="c"><span></span><span class="tok-k">if</span><span class="tok-w"> </span><span class="tok-p">(</span><span class="tok-n">fabs</span><span class="tok-p">(</span><span class="tok-n">ball</span><span class="tok-p">.</span><span class="tok-n">vx</span><span class="tok-o">*</span><span class="tok-n">ball</span><span class="tok-p">.</span><span class="tok-n">vx</span><span class="tok-w"> </span><span class="tok-o">+</span><span class="tok-w"> </span><span class="tok-n">ball</span><span class="tok-p">.</span><span class="tok-n">vy</span><span class="tok-o">*</span><span class="tok-n">ball</span><span class="tok-p">.</span><span class="tok-n">vy</span><span class="tok-p">)</span><span class="tok-w"> </span><span class="tok-o">&lt;</span><span class="tok-w"> </span><span class="tok-mf">0.01f</span><span class="tok-p">)</span></code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_links">Links</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://www.wikihow.com/Normalize-a-Vector">Normalizing a Vector</a></p>
-</li>
-<li>
-<p><a href="https://www.youtube.com/watch?v=Fp7D5D8Bqjc">conservation of Momentum</a></p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>https://eng.libretexts.org/Bookshelves/Introductory_Engineering/Basic_Engineering_Science_-_A_Systems_Accounting_and_Modeling_Approach_(Richards)/03%3A_Conservation_of_Mass/3.03%3A_Conservation_of_Mass_Equation</pre>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-10 19:38:11 -0500
+Last updated 2025-12-10 22:48:47 -0500
 </div>
 </div>
 <script type="text/x-mathjax-config">
