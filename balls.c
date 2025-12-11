@@ -12,8 +12,6 @@
 
 #define METER_AS_PIXELS 3779U
 #define BALL_COUNT 30
-// #define BALL_DISTINCT_UNORDERED_PAIRS \
-//     (((float)BALL_COUNT * ((float)BALL_COUNT - 1.0f)) / 2.0f)
 
 // (BALL_COUNT * (BALL_COUNT - 1)) / 2
 #define BALL_DISTINCT_UNORDERED_PAIRS 435
@@ -337,10 +335,10 @@ updateMain(Game *game,
         b1->py += b1->vy * elapsedTime;
 
         // wrap around screen
-        // if (b1->px < 0) b1->px += (float)game->screen_rect.w;
-        // if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
-        // if (b1->py < 0) b1->py += (float)game->screen_rect.h;
-        // if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
+        if (b1->px < 0) b1->px += (float)game->screen_rect.w;
+        if (b1->px >= game->screen_rect.w) b1->px -= (float)game->screen_rect.w;
+        if (b1->py < 0) b1->py += (float)game->screen_rect.h;
+        if (b1->py >= game->screen_rect.h) b1->py -= (float)game->screen_rect.h;
 
         if (fabs(b1->vx * b1->vx + b1->vy * b1->vy) < 0.01f) {
             b1->vx = 0;
