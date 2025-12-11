@@ -5,5 +5,6 @@ https://raw.githack.com/A-Larsen/balls/refs/heads/main/docs/formulas.html[formul
 for the formulas used in each branch.
 
 == TODO
-- [ ] Collisions
+- [x] Bouncing
+- [x] Collisions
 - [ ] 2D prodjectile Motion
