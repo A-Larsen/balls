@@ -9,5 +9,5 @@ ball will show you an example of elastic collision.
 |===
 | control                             | action
 | right-click                         | select ball
-| right-click and left-click and drag | flings ball on releaser
+| right-click and left-click and drag | flings ball on release
 |===
