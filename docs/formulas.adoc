@@ -4,7 +4,6 @@
 :pygments-style: monokai
 :wrap: normal
 
-== bounce
 * velocity downward
     - stem:[v = g t]
 
