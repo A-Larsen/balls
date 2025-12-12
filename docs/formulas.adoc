@@ -14,10 +14,10 @@
     - stem:[\theta = \arctan(opposite^2 * adjactent^2)]
 
 * Getting initial y velocity (going downward increases in value)
-    - stem:[y_{0} = -launch_initial * \sin(\theta)]
+    - stem:[y_{0} = -l_0 * \sin(\theta)]
 
 * Getting initial x velocity 
-    - stem:[x_{0} = launch_initial * \cos(\theta)]
+    - stem:[x_{0} = l_0 * \cos(\theta)]
 
 NOTE: launch_initial is just an intial, almost arbitrary, value. It is just a
       distance the launch pad is from the mouse and is used to control the
