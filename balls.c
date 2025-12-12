@@ -192,7 +192,7 @@ void update(SDL_Renderer *renderer, uint64_t frame, float seconds,
 {
     static float launch_start = 0;
     static float launch_angle = 0;
-    static float launch_velocity = 0;
+    static float launch_initial = 0;
 
     SDL_Point point = {
         .x = 10,
@@ -216,11 +216,11 @@ void update(SDL_Renderer *renderer, uint64_t frame, float seconds,
         launch_start = seconds;
         launch_angle = angle;
         // hypotenuse is velocity
-        launch_velocity = sqrtf((opposite * opposite) + (adjacent * adjacent));
+        launch_initial = sqrtf((opposite * opposite) + (adjacent * adjacent));
     }
 
     if (launch_start > 0) {
-        drawPath(renderer, &point, launch_velocity, launch_angle, seconds -
+        drawPath(renderer, &point, launch_initial, launch_angle, seconds -
                  launch_start);
     }
 }
