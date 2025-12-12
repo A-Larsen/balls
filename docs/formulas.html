@@ -475,7 +475,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>\$y_{0} = -v * \sin(\theta)\$</p>
+<p>\$y_{0} = -launch_initial * \sin(\theta)\$</p>
 </li>
 </ul>
 </div>
@@ -485,17 +485,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>\$x_{0} = v * \cos(\theta)\$</p>
+<p>\$x_{0} = launch_initial * \cos(\theta)\$</p>
 </li>
 </ul>
 </div>
 </li>
 </ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+launch_initial is just an intial, almost arbitrary, value. It is just a
+      distance the launch pad is from the mouse and is used to control the
+      amount of velocity you want.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-11 19:08:35 -0500
+Last updated 2025-12-11 19:13:37 -0500
 </div>
 </div>
 <script type="text/x-mathjax-config">
