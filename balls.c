@@ -40,8 +40,7 @@ typedef struct _Ball {
     SDL_Point center; 
     SDL_Point velocities;
     uint16_t radius;
-    bool vertical; // check if the ball is 
-    bool horizontal;
+    bool down; // check if the ball is 
     // these two varaibles reset with each fall
     float time_falling; // time it takes to fall from peak
     float height_falling; // max height for each fall
@@ -168,8 +167,7 @@ updateMain(Game *game,
     static Ball ball = {
         .center = {.x = 400, .y = 400},
         .radius = 30,
-        .vertical = true,
-        .horizontal = true,
+        .down = true,
         .e = 0.9f
     };
 
@@ -177,27 +175,27 @@ updateMain(Game *game,
     static float y = 400;
     static float restitution = 1;
     static float f = 0;
-    static float velocity = 0;
+    static float acceleration = 0;
 
 
-    if (ball.vertical)  // falling downward
-        velocity += (game->gravity * f);
+    if (ball.down)  // falling downward
+        acceleration += (game->gravity * f);
      else 
-        velocity -= restitution - (game->gravity * f);
+        acceleration -= restitution - (game->gravity * f);
 
     // clip this to world border
-    ball.center.y = y + velocity;
+    ball.center.y = y + acceleration;
 
-    ball.height_falling = initial_y + (0.5f * game->gravity) * (f * f);
+    // ball.height_falling = initial_y + (0.5f * game->gravity) * (f * f);
 
-    ball.time_falling = sqrt(2 * (initial_y - ball.radius) / game->gravity);
+    // ball.time_falling = sqrt(2 * (initial_y - ball.radius) / game->gravity);
     //
     // This if statement cannot be used because
-     // if (f > time && ball.vertical) {
+     // if (f > time && ball.down) {
      if ((ball.center.y + ball.radius >= game->screen_rect.h) &&
          restitution >= 0) {
          f = 0;
-         ball.vertical = false;
+         ball.down = false;
          restitution *= ball.e;
      }
 
