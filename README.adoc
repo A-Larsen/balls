@@ -1,5 +1,9 @@
 = 2D Projectile Motion
 
+checkout this link
+https://raw.githack.com/A-Larsen/balls/refs/heads/2d-projectile-motion/docs/formulas.html[formulas].
+for a list of forumlas used.
+
 [%header,cols="1,1"]
 |===
 | control                 | action
