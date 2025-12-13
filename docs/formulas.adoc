@@ -4,7 +4,30 @@
 :pygments-style: monokai
 :wrap: normal
 
-* Circle Overplaping
+* Dot Product
+[stem]
+++++
+\overrightarrow{a} \cdot \overrightarrow{b} \\
+\left[ \begin{array}{c}
+a_{1} \\
+a_{2} \\
+\vdots \\
+a_{n}
+\end{array} \right]
+
+\cdot
+
+\left[ \begin{array}{c}
+b_{1} \\
+b_{2} \\
+\vdots \\
+b_{n}
+\end{array} \right]
+=
+a_{1} * b_{1} + a_{2} * b_{2} + * a_{n} * b_{n}
+++++
+
+* Circle Overlapping
     - stem:[|c_1 c_2| <= r_1 + r_2]
 
 * Pythagrean Thereom to find distancce between balls centers
