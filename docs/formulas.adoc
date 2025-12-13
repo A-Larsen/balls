@@ -5,6 +5,7 @@
 :wrap: normal
 
 * Dot Product
+
 [stem]
 ++++
 \overrightarrow{a} \cdot \overrightarrow{b} \\
