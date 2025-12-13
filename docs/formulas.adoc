@@ -32,8 +32,10 @@ a_{1} * b_{1} + a_{2} * b_{2} + * a_{n} * b_{n}
 
 [stem]
 ++++
-|c_1 c_2| <= r_1 + r_2
+|\overrightarrow{c_1} \cdot \overrightarrow{c_2}| <= r_1 + r_2
 ++++
+
+NOTE: stem:[c_1] and stem:[c_1] are the centers of circle one and two
 
 * Pythagrean Thereom to find distancce between balls centers
 
