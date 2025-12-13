@@ -29,32 +29,69 @@ a_{1} * b_{1} + a_{2} * b_{2} + * a_{n} * b_{n}
 ++++
 
 * Circle Overlapping
-    - stem:[|c_1 c_2| <= r_1 + r_2]
+
+[stem]
+++++
+|c_1 c_2| <= r_1 + r_2
+++++
 
 * Pythagrean Thereom to find distancce between balls centers
-    - stem:[a^2 + b^2 = c^2]
+
+[stem]
+++++
+a^2 + b^2 = c^2
+++++
 
 * Vector Normalization
-    - stem:[\hat{u} = \frac{\overrightarrow{v}}{|\overrightarrow{v}|}]
+
+[stem]
+++++
+\hat{u} = \frac{\overrightarrow{v}}{|\overrightarrow{v}|}
+++++
+
 
 * Magnitude of a Vector
-    - stem:[||\overrightarrow{a}|| = \sqrt{a_{1}^2 + a_{2}^2 + \dots a_{n}^2}]
+
+[stem]
+++++
+|\overrightarrow{a}| = \sqrt{a_{1}^2 + a_{2}^2 + \dots a_{n}^2}
+++++
 
 * Finding tangent vector
-    - stem:[x = -y, y = x]
+
+[stem]
+++++
+x = -y, y = x
+++++
 
 * 1D Conservation of Momentum
-    - stem:[m_1 v_1 + m_2 v_2 = m_1 v_1 + m_2 v_2]
+
+[stem]
+++++
+m_1 v_1 + m_2 v_2 = m_1 v_1 + m_2 v_2
+++++
 
 * 1D Elastic Collision
-    - stem:[v_1' = (v_1 * (m_1-m_2) + 2 * m_2 * v_2)) / (m_1 + m_2)]
-    - stem:[v_2' = (v_2 * (m_2-m_1) + 2 * m_1 * v_1)) / (m_1 + m_2)]
+
+[stem]
+++++
+v_1' = (v_1 * (m_1-m_2) + 2 * m_2 * v_2)) / (m_1 + m_2) \\
+v_2' = (v_2 * (m_2-m_1) + 2 * m_1 * v_1)) / (m_1 + m_2)
+++++
 
 * Finding magnitude in a specific direction
-    - stem:[|\overrightarrow{v}| = \overrightarrow{n} \cdot \overrightarrow{v}]
+
+[stem]
+++++
+|\overrightarrow{v}| = \overrightarrow{n} \cdot \overrightarrow{v}
+++++
 
 * Distinct unordered pairs
-    - stem:[(n,2) = \frac{n(n-1)}{2}]
+
+[stem]
+++++
+(n,2) = \frac{n(n-1)}{2}]
+++++
 
 
 == Seeing if circle collide
