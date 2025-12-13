@@ -35,6 +35,9 @@ a_{1} * b_{1} + a_{2} * b_{2} + * a_{n} * b_{n}
 |\sqrt{a^2 + b^2}| <= r_1 + r_2
 ++++
 
+NOTE: a and a is the opposite and adjacent sides found from
+      the centers of both circles
+
 
 * Pythagrean Thereom to find distancce between balls centers
 
