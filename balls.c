@@ -29,7 +29,7 @@ typedef struct _Ball {
     float px, py, vx, vy, ax, ay;
     float radius;
     uint8_t color;
-    uint16_t mass;
+    float mass;
 } Ball;
 
 typedef struct _Mouse {
@@ -382,15 +382,14 @@ updateMain(Game *game,
                 game->balls_colliding[game->collision_count++] = b2;
                 float distance = fabs(getHyp(b1->px, b1->py, b2->px, b2->py));
 
-                float overlap = (distance - (float)b1->radius -
-                                (float)b2->radius);
+                float overlap = (distance - b1->radius - b2->radius);
 
                 if (distance == 0) continue;
 
-                b1->px -= overlap * (float)(b1->px - b2->px) / distance;
-                b1->py -= overlap * (float)(b1->py - b2->py) / distance;
-                b2->px += overlap * ((float)b1->px - b2->px) / distance;
-                b2->py += overlap * (float)(b1->py - b2->py) / distance;
+                b1->px -= overlap * (b1->px - b2->px) / distance;
+                b1->py -= overlap * (b1->py - b2->py) / distance;
+                b2->px += overlap * (b1->px - b2->px) / distance;
+                b2->py += overlap * (b1->py - b2->py) / distance;
             // }
         }
     }
