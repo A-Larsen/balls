@@ -1,0 +1,10 @@
+all: clean readme
+
+readme: README.adoc
+	asciidoctor -b html5 $^ -o rendered.html
+
+clean:
+	rm -rf rendered.html
+	rm -rf diag*.png
+
+.PHONY: clean

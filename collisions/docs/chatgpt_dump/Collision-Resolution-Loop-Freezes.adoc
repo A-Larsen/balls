@@ -1,0 +1,192 @@
+= Why Your Collision-Resolution Loop Freezes and How to Fix It
+:wrap: normal
+
+[source,c]
+----
+for (int i = 0; i < BALL_COUNT; ++i) {
+    Ball *b1 = &game->balls[i];
+
+    for (int j = i + 1; j < BALL_COUNT; ++j) {
+        Ball *b2 = &game->balls[j];
+
+        if (!ballCollide(*b1, *b2)) continue;
+            colliding = calloc(sizeof(Ball *), (collision_count + 2));
+            END((!colliding), "calloc()", "could not allocate colliding()" );
+            colliding[collision_count++] = b1;
+            colliding[collision_count++] = b2;
+            float distance = getHyp(b1->px, b1->py, b2->px, b2->py);
+
+            float overlap = 0.5f * (distance - (float)b1->radius -
+                            (float)b2->radius);
+            b1->px -= 
+                overlap * (float)(b1->px - b2->px) / distance;
+            b1->py -= 
+                overlap * (float)(b1->py - b2->py) / distance;
+            b2->px += 
+                overlap * (float)(b1->px - b2->px) / distance;
+            b2->py += 
+                overlap * (float)(b1->py - b2->py) / distance;
+
+        // all collisions must be resolved
+        // TODO
+        // fix issue that freezes program from this loop
+        while(ballCollide(*b1, *b2)) {
+            b1->px -= (float)(b1->px - b2->px) / distance;
+            b1->py -= (float)(b1->py - b2->py) / distance;
+            b2->px += (float)(b1->px - b2->px) / distance;
+            b2->py += (float)(b1->py - b2->py) / distance;
+        }
+    }
+}
+----
+
+Your code contains the classic problem of **over-correcting** and then
+**rechecking using new positions**, which makes the loop never terminate.
+Let’s walk through why this happens and how to fix it.
+
+
+== 1. The critical problem: using updated positions inside the loop
+
+Inside your main collision-resolution:
+
+[source,c]
+----
+b1->px -= overlap * (b1->px - b2->px) / distance;
+b1->py -= overlap * (b1->py - b2->py) / distance;
+b2->px += overlap * (b1->px - b2->px) / distance;
+b2->py += overlap * (b1->py - b2->py) / distance;
+----
+
+This is correct.
+
+But then you do:
+
+[source,c]
+----
+while (ballCollide(*b1, *b2)) {
+    b1->px -= (b1->px - b2->px) / distance;
+    b1->py -= (b1->py - b2->py) / distance;
+    b2->px += (b1->px - b2->px) / distance;
+    b2->py += (b1->py - b2->py) / distance;
+}
+----
+
+== ❌ Why this freezes
+
+1. `distance` stays the **old** value (before modifying positions).
+2. But `(b1->px - b2->px)` is updated each iteration.
+3. This causes steps that:
+   * overshoot  
+   * oscillate  
+   * sometimes increase overlap instead of decreasing it  
+4. So `ballCollide()` keeps returning true forever → **infinite loop**.
+
+This is a well-known bug in naive iterative separation.
+
+== 2. Mathematical explanation
+
+Your update step behaves like:
+
+  x ← x − (x / constant)
+
+This only converges to zero if:
+  
+  |1 − 1/constant| < 1
+
+But because the denominator (`distance`) is incorrect after the first
+shift, the term can jump back and forth.
+
+In other words:
+
+You are using a **fixed-length correction step based on old geometry**,
+but applying it to **new geometry**.
+
+This makes the correction unstable.
+
+
+== 3. Proper fix: recompute distance each iteration OR limit iterations
+
+Method A — Recompute distance every pass:
+
+[source,c]
+----
+int loop_guard = 0;
+while (ballCollide(*b1, *b2) && loop_guard++ < 4) {
+    float dx = b1->px - b2->px;
+    float dy = b1->py - b2->py;
+    float d  = sqrtf(dx*dx + dy*dy);
+
+    if (d == 0) break;
+
+    float overlap = 0.5f * (d - b1->radius - b2->radius);
+    float nx = dx / d;
+    float ny = dy / d;
+
+    b1->px -= overlap * nx;
+    b1->py -= overlap * ny;
+    b2->px += overlap * nx;
+    b2->py += overlap * ny;
+}
+----
+
+Why this works:
+
+* `dx`, `dy`, and `distance` are recalculated from the new positions.  
+* The correction scales perfectly with the current geometry.  
+* The loop is guaranteed to converge.
+
+Method B — Avoid loops entirely  
+Just do **one correction step per frame**, which is how most engines and
+the Jonathan Blow code handle it.
+
+== 4. Even better fix: use Blow’s displacement formula directly
+
+His code displaces balls only **once** per collision pass:
+
+[source,c]
+----
+float fDistance = sqrtf(dx*dx + dy*dy);
+float fOverlap = 0.5f * (fDistance - r1 - r2);
+
+b1->px -= fOverlap * (dx / fDistance);
+b1->py -= fOverlap * (dy / fDistance);
+
+b2->px += fOverlap * (dx / fDistance);
+b2->py += fOverlap * (dy / fDistance);
+----
+
+This resolves overlap in **one stable pass**, so you don’t need a loop.
+
+== 5. Bonus: Your calloc() usage is also wrong
+
+You do:
+
+[source,c]
+----
+colliding = calloc(sizeof(Ball *), (collision_count + 2));
+----
+
+Correct `calloc` order is:
+
+  calloc(num_elements, element_size)
+
+So you should use:
+
+[source,c]
+----
+colliding = calloc(collision_count + 2, sizeof(Ball *));
+----
+
+== 6. Final Summary
+
+* The infinite loop comes from using **outdated distance values** while
+  updating positions.
+* This causes oscillation → `ballCollide()` never returns false.
+* Fixes:
+  - recompute distance each iteration, or  
+  - apply the correct one-shot overlap resolution (recommended).  
+* Also fix your `calloc` order.
+
+If you want, I can rewrite your entire collision loop into a clean,
+correct, minimal version similar to Jonathan Blow’s system.
+

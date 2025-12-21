@@ -1,8 +1,12 @@
-== Balls
-This repository has physics examples using balls. Each branch has a different
-example, with a link to the formulas used.
+:docinfo: shared
+:source-highlighter: pygments
+:pygments-style: monokai
+:icons: font
+:stem:
+:docinfodir: .
+:nofooter:
 
-== TODO
-- [x] Bouncing
-- [x] Collisions
-- [ ] 2D projectile Motion
+= Balls
+
+This repository has physics examples using balls. Each folder has a different
+example, with a link to the formulas used in the readme's.

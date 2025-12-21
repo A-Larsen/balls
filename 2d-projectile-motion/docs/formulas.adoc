@@ -1,0 +1,27 @@
+= Formulas
+:stem: 
+:source-highlighter: pygments
+:pygments-style: monokai
+:wrap: normal
+
+* Velocity of y
+    - stem:[\Deltay = V_{0}t + 1/2at^2]
+
+* Velocity of x
+    - stem:[\Deltax = V_{0}t]
+
+* Angle of trojectory
+    - stem:[\theta = \arctan(frac{opposite}{adjactent})]
+
+* Getting initial y velocity (going downward increases in value)
+    - stem:[y_{0} = -l_0 * \sin(\theta)]
+
+* Getting initial x velocity 
+    - stem:[x_{0} = l_0 * \cos(\theta)]
+
+* Pathagorean Theorem
+    - stem:[a^2 + b^2 = c^2]
+
+NOTE: launch_initial is just an intial, almost arbitrary, value. It is just a
+      distance the launch pad is from the mouse and is used to control the
+      amount of velocity you want.

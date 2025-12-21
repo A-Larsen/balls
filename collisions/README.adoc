@@ -1,0 +1,28 @@
+= Ball Collision
+
+Creates random balls. These balls will resolve any collision issues. Launching a
+ball will show you an example of elastic collision.
+
+checkout this link https://raw.githack.com/A-Larsen/balls/refs/heads/collisions/docs/formulas.html[formulas].
+for a list of forumlas used.
+
+== Controls
+
+[%header,cols="1,1"]
+|===
+| control                             | action
+| right-click                         | select ball
+| right-click and left-click and drag | flings ball on release, the distance
+                                        away from the ball determines the amount
+                                        of velocity to launch the ball at
+|===
+
+== Links
+* https://www.studyplan.dev/sdl2/sdl2-relative-mode[sdl2-relative-mouse-mode]
+* https://www.youtube.com/watch?v=XJnIdRXUi7A&t=315s[permutations and combinations]
+* https://www.youtube.com/watch?v=CFbo_nBdBco[OCT | Elastic Collisions]
+* https://www.wikihow.com/Normalize-a-Vector[Normalizing a Vector]
+* https://www.youtube.com/watch?v=Fp7D5D8Bqjc[conservation of Momentum]
+----
+https://eng.libretexts.org/Bookshelves/Introductory_Engineering/Basic_Engineering_Science_-_A_Systems_Accounting_and_Modeling_Approach_(Richards)/03%3A_Conservation_of_Mass/3.03%3A_Conservation_of_Mass_Equation
+----
